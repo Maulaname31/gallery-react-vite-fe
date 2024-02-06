@@ -1,0 +1,1 @@
+export const url_develope = 'http://localhost:3001/api'

@@ -1,6 +1,7 @@
 import React, {useState} from 'react'
 import axios from 'axios'
 import { Link, useNavigate} from 'react-router-dom'
+import { url_develope } from '../../const'
 
 
 function RegisterPage() {
@@ -39,7 +40,7 @@ function RegisterPage() {
       }
   
       try {
-        const response = await axios.post('http://localhost:3001/api/account/auth/register', {
+        const response = await axios.post(`${url_develope}/account/auth/register`, {
           username,
           fullName,
           email,

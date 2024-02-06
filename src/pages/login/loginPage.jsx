@@ -1,13 +1,14 @@
 import React, {useState} from 'react'
 import axios from 'axios';
 import { Link,useNavigate } from 'react-router-dom';
+import { url_develope } from '../../const';
 
 
 function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
-  // const url_develope = "http://localhost:3001/api"
+ 
   const navigate = useNavigate()
 
 
@@ -26,14 +27,15 @@ function LoginPage() {
         return;
       }
 
-      const response = await axios.post(`http://localhost:3001/api/account/auth/login`, {
+      const response = await axios.post(`${url_develope}/account/auth/login`, {
         email,
         password,
       });
 
       if (response.status === 200) {
-        const token = response.data.token;
-        localStorage.setItem('jwtToken', token);
+        const data = response.data;
+        localStorage.setItem('jwtToken', data.token);
+    
   
         if (response.data.role === 'admin') {
           navigate('/admin', { replace: true });

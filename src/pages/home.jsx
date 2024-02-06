@@ -1,12 +1,13 @@
 // ApiTestComponent.jsx
 import React from 'react';
 import Nav from '../components/nav';
+import Footer from '../components/footer';
 
 function Home() {
 
 
   return (
-    <div>
+    <div className='h-auto'>
       <Nav/>
 <div className="carousel carousel-end rounded-box">
   <div className="carousel-item">
@@ -30,6 +31,9 @@ function Home() {
   <div className="carousel-item">
     <img src="https://daisyui.com/images/stock/photo-1601004890684-d8cbf643f5f2.jpg" alt="Drink" />
   </div>
+</div>
+<div>
+  <Footer/>
 </div>
 </div>
   );
