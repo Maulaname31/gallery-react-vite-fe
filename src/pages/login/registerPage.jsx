@@ -4,9 +4,12 @@ import { Link, useNavigate} from 'react-router-dom'
 
 
 function RegisterPage() {
-    const [username, setusername] = useState('')
+    const [username,setUsername] = useState('')
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
+    const [confirmPassword, setConfirmPassword] = useState('')
+    const [address, setAddress]= useState('')
+    const [fullName, setFullname] = useState('')
     const [error, setError] = useState('')
     const [notif, setNotif] = useState('')
     const navigate = useNavigate()
@@ -25,6 +28,10 @@ function RegisterPage() {
         setNotif('Data required');
         return;
       }
+      if(password != confirmPassword){
+        setError('Password not match')
+        return
+      }
   
       if (!validateEmail(email)) {
         console.log('Invalid email address. Please use a valid Gmail or Yahoo email.');
@@ -34,8 +41,11 @@ function RegisterPage() {
       try {
         const response = await axios.post('http://localhost:3001/api/account/auth/register', {
           username,
+          fullName,
           email,
           password,
+          address
+
         });
   
         if (response.status === 201) {
@@ -73,15 +83,38 @@ function RegisterPage() {
                   <span>{notif}</span>
                 </div>
               )}
+              
+
+        {error && (
+              <div role="alert" className="alert alert-warning">
+                <svg xmlns="http://www.w3.org/2000/svg" className="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                </svg>
+                <span>{error}</span>
+              </div>
+            )}
           <div className="form-control">
             <label className="label">
               <span className="label-text">Username</span>
             </label>
             <input 
-            type="username"  
+            type="text"  
             value={username}
-            onChange={(e) => setusername(e.target.value)}
+            onChange={(e) =>setUsername(e.target.value)}
             id="username"
+            className="input input-bordered" 
+            required />
+          </div>
+
+          <div className="form-control">
+            <label className="label">
+              <span className="label-text">Full name</span>
+            </label>
+            <input 
+            type="text"  
+            value={fullName}
+            onChange={(e) =>setFullname(e.target.value)}
+            id="fullname"
             className="input input-bordered" 
             required />
           </div>
@@ -111,6 +144,33 @@ function RegisterPage() {
              className="input input-bordered" 
              required />
           </div>
+
+          <div className="form-control">
+            <label className="label">
+              <span className="label-text">confirm Password</span>
+            </label>
+            <input
+             type="password" 
+             value={confirmPassword}
+             onChange={(e) => setConfirmPassword(e.target.value)}
+             id="confirmPassword"
+             className="input input-bordered" 
+             required />
+          </div>
+
+          <div className="form-control">
+            <label className="label">
+              <span className="label-text">Address</span>
+            </label>
+            <input 
+            type="text"  
+            value={address}
+            onChange={(e) =>setAddress(e.target.value)}
+            id="address"
+            className="input input-bordered" 
+            required />
+          </div>
+
 
           <div className="form-control mt-6">
           <button onClick={handleSubmit} className="btn btn-primary">Register</button>

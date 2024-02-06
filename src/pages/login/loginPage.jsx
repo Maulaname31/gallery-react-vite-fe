@@ -34,7 +34,12 @@ function LoginPage() {
       if (response.status === 200) {
         const token = response.data.token;
         localStorage.setItem('jwtToken', token);
-        navigate('/', {replace: true})
+  
+        if (response.data.role === 'admin') {
+          navigate('/admin', { replace: true });
+        } else {
+          navigate('/', { replace: true });
+        }
       }
     } catch (error) {
       setError('Email atau password salah!');
