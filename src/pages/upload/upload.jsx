@@ -5,10 +5,15 @@ import { url_develope } from '../../const'
 import { jwtDecode } from 'jwt-decode'
 
 function Upload() {
-    const [title, setTitle] = useState('')
+    const [tittle, setTittle] = useState('')
     const [description, setDescription] = useState('')
     const [uploadDate, setUploadDate] = useState('')
-    const [fileLocation, setFileLocation] = useState(null)
+    const [fileLocation, setFileLocation] = useState({
+      src:'',
+      width:'',
+      height:''
+
+    })
     const [notif, setNotif] = useState('')
     const navigate = useNavigate()
 
@@ -29,10 +34,10 @@ function Upload() {
         e.preventDefault();
 
         const data = new FormData();
-        data.append('photoTitle', title)
+        data.append('photoTittle', tittle)
         data.append('description', description)
         data.append('uploadData', uploadDate)
-        data.append('fileLocation', fileLocation)
+        data.append('src', fileLocation)
         data.append('userId', userID)
 
         try{
@@ -67,12 +72,12 @@ function Upload() {
               )}
             <div className="form-control">
                 <label className="label">
-                <span className="label-text">Title</span>
+                <span className="label-text">Tittle</span>
                 </label>
                 <input 
                 type="text"  
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
+                value={tittle}
+                onChange={(e) => setTittle(e.target.value)}
                 id="title"
                 className="input input-bordered" 
                 required />

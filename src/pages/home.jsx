@@ -1,41 +1,74 @@
-// ApiTestComponent.jsx
-import React from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import Nav from '../components/nav';
 import Footer from '../components/footer';
+import { url_develope } from '../const';
+import axios from 'axios';
+import Lightbox from "yet-another-react-lightbox";
+import { PhotoAlbum } from 'react-photo-album';
+import "yet-another-react-lightbox/styles.css";
+import "yet-another-react-lightbox/plugins/thumbnails.css";
+import "yet-another-react-lightbox/plugins/captions.css";
+import Captions from "yet-another-react-lightbox/plugins/captions";
+import Fullscreen from "yet-another-react-lightbox/plugins/fullscreen";
+import Slideshow from "yet-another-react-lightbox/plugins/slideshow";
+import Thumbnails from "yet-another-react-lightbox/plugins/thumbnails";
+import Zoom from "yet-another-react-lightbox/plugins/zoom";
 
 function Home() {
+  const [post, setPost] = useState([]);
+  const [index, setIndex] = useState(-1)
 
+
+  const fetchPostData = useCallback(async () => {
+    try {
+      const response = await axios.get(`${url_develope}/upload/`);
+      const dataImageUrl = response.data.map((item) => ({
+        ...item,
+        src: `http://localhost:3001/${item.fileLocation[0].src}`,
+        width: item.fileLocation[0].width,
+        height: item.fileLocation[0].height,
+   
+      }));
+      setPost(dataImageUrl);
+    } catch (error) {
+      console.error('Error fetching data:', error.message);
+    }
+  }, []); 
+
+  useEffect(() => {
+    fetchPostData();  
+  }, [fetchPostData]); 
 
   return (
     <div className='h-auto'>
-      <Nav/>
-<div className="carousel carousel-end rounded-box">
-  <div className="carousel-item">
-    <img src="https://daisyui.com/images/stock/photo-1559703248-dcaaec9fab78.jpg" alt="Drink" />
-  </div> 
-  <div className="carousel-item">
-    <img src="https://daisyui.com/images/stock/photo-1565098772267-60af42b81ef2.jpg" alt="Drink" />
-  </div> 
-  <div className="carousel-item">
-    <img src="https://daisyui.com/images/stock/photo-1572635148818-ef6fd45eb394.jpg" alt="Drink" />
-  </div> 
-  <div className="carousel-item">
-    <img src="https://daisyui.com/images/stock/photo-1494253109108-2e30c049369b.jpg" alt="Drink" />
-  </div> 
-  <div className="carousel-item">
-    <img src="https://daisyui.com/images/stock/photo-1550258987-190a2d41a8ba.jpg" alt="Drink" />
-  </div> 
-  <div className="carousel-item">
-    <img src="https://daisyui.com/images/stock/photo-1559181567-c3190ca9959b.jpg" alt="Drink" />
-  </div> 
-  <div className="carousel-item">
-    <img src="https://daisyui.com/images/stock/photo-1601004890684-d8cbf643f5f2.jpg" alt="Drink" />
-  </div>
-</div>
-<div>
-  <Footer/>
-</div>
-</div>
+      <Nav />
+
+      <div className='p-4 mt-8 mx-auto my-auto shadow-md'>
+        <PhotoAlbum
+          className='rounded-lg'
+          layout="rows"
+          photos={post}
+          targetRowHeight={150}
+          onClick={({ index }) => setIndex(index)} 
+        />
+        </div>
+
+         <Lightbox
+        slides={post}
+        open={index >= 0}
+        index={index}
+        close={() => setIndex(-1)}
+        plugins={[Fullscreen, Slideshow, Thumbnails, Zoom,Captions]}
+        
+      /> 
+
+
+
+
+        <div>
+        <Footer />
+      </div>
+    </div>
   );
 }
 

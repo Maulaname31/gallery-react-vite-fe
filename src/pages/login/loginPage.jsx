@@ -38,7 +38,7 @@ function LoginPage() {
     
   
         if (response.data.role === 'admin') {
-          navigate('/admin', { replace: true });
+          navigate('/dashboard', { replace: true });
         } else {
           navigate('/', { replace: true });
         }
