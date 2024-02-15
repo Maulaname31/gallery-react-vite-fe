@@ -28,7 +28,7 @@ function Home() {
         width: item.fileLocation[0].width,
         height: item.fileLocation[0].height,
    
-      }));
+      }));  
       setPost(dataImageUrl);
     } catch (error) {
       console.error('Error fetching data:', error.message);

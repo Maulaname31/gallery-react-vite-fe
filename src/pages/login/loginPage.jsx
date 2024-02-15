@@ -34,6 +34,7 @@ function LoginPage() {
 
       if (response.status === 200) {
         const data = response.data;
+        localStorage.setItem('isLoggedIn', true);
         localStorage.setItem('jwtToken', data.token);
     
   
