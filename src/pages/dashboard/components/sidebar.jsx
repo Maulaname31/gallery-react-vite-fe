@@ -1,14 +1,22 @@
-import React from 'react'
-import Table from './tableAccount'
 import { useNavigate, Link } from 'react-router-dom'
+import { jwtDecode } from 'jwt-decode'
 
 function Sidebar() {
-
+  const token = localStorage.getItem('jwtToken');
+  const getRole = () => {
+    if (token) {
+      const decode = jwtDecode(token);
+      return decode.role;
+    }
+    return null;
+  };
+  const userRole = getRole();
   const Navigate = useNavigate()
+
   const handleLogout = () =>{
     localStorage.removeItem('jwtToken')
     localStorage.removeItem('userId')
-    Navigate('/')
+    Navigate('/login')
   }
   return (
     
@@ -26,12 +34,21 @@ function Sidebar() {
     <div className="drawer-side">
         <label htmlFor="my-drawer-2" aria-label="close sidebar" className="drawer-overlay"></label> 
         <ul className="menu p-4 w-80 min-h-full bg-base-200 text-base-content">
-      {/* Sidebar content here */}
-      <a href='/' className="btn btn-ghost text-xl"><Link to='/'>GalleryUi</Link></a>
-      <li><Link to='/dashboard'>Dasboard</Link></li>
-      <li><Link to='/category'>Category</Link></li>
-      <li><Link to='/post'>Post</Link></li>
-      <hr className='mt-11 mb-11' />
+      <Link to='/' className="btn btn-ghost text-xl">GalleryUi</Link>
+
+      {userRole === 'admin' ? (
+        <>
+          <li><Link to='/dashboard'>Dashboard</Link></li>
+          <li><Link to='/category'>Category</Link></li>
+        </>
+      ) : 
+        <>
+        <li><Link>Post Image</Link></li>
+        <li><Link>Album</Link></li>
+        <li><Link>Like & Comment</Link></li>
+        </>}
+
+      <hr className='mt-11 mb-3' />
       <li onClick={handleLogout} className=''><a>LogOut</a></li>
     </ul>
   

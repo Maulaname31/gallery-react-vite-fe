@@ -1,8 +1,8 @@
 import React,{useState, useEffect} from 'react'
 import { useParams, useNavigate, Link} from 'react-router-dom'
-import { url_develope } from '../../../../const'
 import axios from 'axios'
 import { swalSucces } from '../../../../components/alert'
+import { url_develope } from '../../../../const'
 
 function AccountUpdate() {
     const {userId} = useParams()

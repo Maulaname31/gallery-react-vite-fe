@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { url_develope } from '../../const';
+import { url_develope } from '../../../../const';
 import { jwtDecode } from 'jwt-decode';
+import { swalSucces } from '../../../../components/alert';
 
 
 function Upload() {
@@ -67,11 +68,8 @@ function Upload() {
                     'Content-Type':  'multipart/form-data',
                 }
             });
-            setNotif('upload successfully');
-            setTimeout(() => {
-                setNotif(null);
-            }, 3000);
-            navigate('/');
+            swalSucces('Success',"Category created successfully", "success")
+            navigate('/photo');
         } catch (error) {
             console.error('Error uploading photo:', error);
             setNotif('Upload failed. Please try again.'); 
@@ -88,7 +86,10 @@ function Upload() {
                 console.error('Error fetching data:', error);
             });
     }, []);
-    // console.log(selectedCategories)
+  
+    const handleCategoryRemoval = (categoryIdToRemove) => {
+        setSelectedCategories(selectedCategories.filter(category => category.categoryId !== categoryIdToRemove));
+    };
 
     return (
         <div className="flex justify-center items-center h-auto">
@@ -102,62 +103,59 @@ function Upload() {
                             <span>{notif}</span>
                         </div>
                     )}
-                    <div className="form-control">
-                        <label className="label">
-                            <span className="label-text">Tittle</span>
-                        </label>
-                        <input 
-                            type="text"  
-                            value={tittle}
-                            onChange={(e) => setTittle(e.target.value)}
-                            id="title"
-                            className="input input-bordered" 
-                            required 
-                        />
-                    </div>
+                    <div className="flex">
+                        <div className="form-control flex-1 mr-2">
+                            <label className="label">
+                                <span className="label-text">Title</span>
+                            </label>
+                            <input 
+                                type="text"  
+                                value={tittle}
+                                onChange={(e) => setTittle(e.target.value)}
+                                id="title"
+                                className="input input-bordered" 
+                                required 
+                            />
+                        </div>
 
-                    <div className="form-control">
-                        <label className="label">
-                            <span className="label-text">description</span>
-                        </label>
-                        <input
-                            type="text" 
-                            value={description}
-                            onChange={(e) => setDescription(e.target.value)}
-                            id="description"
-                            className="input input-bordered" 
-                            required 
-                        />
+                        <div className="form-control flex-1 ml-2">
+                            <label className="label">
+                                <span className="label-text">Description</span>
+                            </label>
+                            <input
+                                type="text" 
+                                value={description}
+                                onChange={(e) => setDescription(e.target.value)}
+                                id="description"
+                                className="input input-bordered" 
+                                required 
+                            />
+                        </div>
                     </div>
                     
-                    <div>
-                        <label className='label'>Photo</label>
-                        <div className="max-w-sm p-6 mb-4 bg-slate-200 border-dashed border-2 border-gray-400 rounded-lg items-center mx-auto text-center cursor-pointer">
-                            <input
-                                id="upload"
-                                type="file"
-                                className='opacity-0'
-                                accept="image/*"
-                                onChange={handleFileChange}
-                            />
+                    <div className="flex items-center justify-center w-full">
                             {!previewUrl ? (
-                                <div>
-                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="w-8 h-8 text-gray-700 mx-auto mb-4">
-                                        <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" />
-                                    </svg>
-                                    <h5 className="mb-2 text-xl font-bold tracking-tight text-gray-700">Upload picture</h5>
-                                    <p className="font-normal text-sm text-gray-400 md:px-6">Choose photo size should be less than <b className="text-gray-600">2mb</b></p>
-                                    <p className="font-normal text-sm text-gray-400 md:px-6">and should be in <b className="text-gray-600">JPG, PNG, or GIF</b> format.</p>
-                                    <span id="filename" className="text-gray-500 bg-gray-200 z-50"></span>
-                                </div>
+                        <label htmlFor="dropzone-file" className="flex flex-col items-center justify-center w-full h-64 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-bray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600">
+                            <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                                <svg className="w-8 h-8 mb-4 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 16">
+                                    <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"/>
+                                </svg>
+                                <p className="mb-2 text-sm text-gray-500 dark:text-gray-400"><span className="font-semibold">Click to upload</span> or drag and drop</p>
+                                <p className="text-xs text-gray-500 dark:text-gray-400">SVG, PNG, JPG or GIF (MAX. 800x400px)</p>
+                            </div>
+                            <input 
+                            id="dropzone-file" 
+                            type="file" 
+                            onChange={handleFileChange}
+                            className="hidden" />
+                        </label>
                                 ) : (
                                 <img
                                     src={previewUrl}
                                     alt="Preview"
-                                    className="w-full max-h-72 mx-auto"
+                                    className="max-w-full h-auto max-h-72 object-cover mx-auto"
                                 />
                                 )}
-                        </div>
                     </div>
 
                      <div>
@@ -173,7 +171,14 @@ function Upload() {
                                 <option key={index} value={item.categoryId}>{item.nameCategory}</option>
                             ))}
                         </select>
-                        <span>{selectedCategories.map(v => v.nameCategory).join(", ")}</span>
+                        <div className="mt-2">
+                        {selectedCategories.map((category, index) => (
+                            <div key={index} className="flex items-center">
+                                <span className="mr-2">{category.nameCategory}</span>
+                                <i  onClick={() => handleCategoryRemoval(category.categoryId)} className="ri-delete-bin-fill cursor-pointer text-red-600 "></i>
+                        </div>
+                        ))}
+                    </div>
                     </div>
 
 
