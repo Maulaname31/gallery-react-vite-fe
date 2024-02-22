@@ -34,10 +34,14 @@ function Home() {
       console.error('Error fetching data:', error.message);
     }
   }, []); 
-
   useEffect(() => {
     fetchPostData();  
   }, [fetchPostData]); 
+
+ 
+
+
+
 
   return (
     <div className='h-auto'>

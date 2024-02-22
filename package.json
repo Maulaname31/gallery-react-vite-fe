@@ -18,6 +18,7 @@
     "react-dom": "^18.2.0",
     "react-photo-album": "^2.3.1",
     "react-router-dom": "^6.21.3",
+    "sweetalert2": "^11.10.5",
     "tailwindcss": "^3.4.1",
     "yet-another-react-lightbox": "^3.17.0"
   },

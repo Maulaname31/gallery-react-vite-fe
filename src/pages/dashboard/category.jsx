@@ -1,16 +1,17 @@
 import React from 'react'
 import Sidebar from './components/sidebar'
 import TableAccount from './components/tableAccount'
+import TableCategory from './components/tableCategory'
 
-function Dashboard() {
+function Category() {
   return (
     <>
     <Sidebar/>
       <div className='container mx-auto'>  
-         <TableAccount />
+         <TableCategory/>
     </div>
     </>
   )
 }
 
-export default Dashboard
+export default Category

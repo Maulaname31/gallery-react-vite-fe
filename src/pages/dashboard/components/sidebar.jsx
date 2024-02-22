@@ -1,7 +1,15 @@
 import React from 'react'
-import Table from './table'
+import Table from './tableAccount'
+import { useNavigate, Link } from 'react-router-dom'
 
 function Sidebar() {
+
+  const Navigate = useNavigate()
+  const handleLogout = () =>{
+    localStorage.removeItem('jwtToken')
+    localStorage.removeItem('userId')
+    Navigate('/')
+  }
   return (
     
   <div className="drawer z-[999]">
@@ -19,12 +27,12 @@ function Sidebar() {
         <label htmlFor="my-drawer-2" aria-label="close sidebar" className="drawer-overlay"></label> 
         <ul className="menu p-4 w-80 min-h-full bg-base-200 text-base-content">
       {/* Sidebar content here */}
-      <a className="btn btn-ghost text-xl">PictUL</a>
-      <li><a>Dasboard</a></li>
-      <li><a>Category</a></li>
-      <li><a>Account</a></li>
+      <a href='/' className="btn btn-ghost text-xl"><Link to='/'>GalleryUi</Link></a>
+      <li><Link to='/dashboard'>Dasboard</Link></li>
+      <li><Link to='/category'>Category</Link></li>
+      <li><Link to='/post'>Post</Link></li>
       <hr className='mt-11 mb-11' />
-      <li ><a>LogOut</a></li>
+      <li onClick={handleLogout} className=''><a>LogOut</a></li>
     </ul>
   
   </div>

@@ -2,8 +2,8 @@ import React from 'react'
 
 function Loading() {
   return (
-    <div>Loading</div>
+    <div><span className="loading loading-ring loading-lg"></span></div>
   )
 }
 
-export default Loading
+export default Loading  

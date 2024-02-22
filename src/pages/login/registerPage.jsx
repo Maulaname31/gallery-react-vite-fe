@@ -7,10 +7,10 @@ import { url_develope } from '../../const'
 function RegisterPage() {
     const [username,setUsername] = useState('')
     const [email, setEmail] = useState('')
-    const [password, setPassword] = useState('')
-    const [confirmPassword, setConfirmPassword] = useState('')
     const [address, setAddress]= useState('')
     const [fullName, setFullname] = useState('')
+    const [password, setPassword] = useState('')
+    const [confirmPassword, setConfirmPassword] = useState('')
     const [error, setError] = useState('')
     const [notif, setNotif] = useState('')
     const navigate = useNavigate()
