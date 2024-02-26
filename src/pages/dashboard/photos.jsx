@@ -1,37 +1,50 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import Sidebar from './components/sidebar';
 import Loading from '../../components/loading';
 import axios from 'axios';
 import { url_develope } from '../../const';
 import { useNavigate } from 'react-router-dom';
 import { swalConfirm } from '../../components/alert';
+import { jwtDecode } from 'jwt-decode';
 
 function Photos() {
     const [data, setData] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const navigate = useNavigate()
+    const token = localStorage.getItem('jwtToken');
+    const getUserId = () => {
+      if (token) {
+        const decode = jwtDecode(token);
+        return decode.userId;
+      }
+      return null;
+    };
+    const userId = getUserId();
 
-    useEffect(() => {
-        fetchData();
-    }, []);
-
-    const fetchData = async () => {
+    
+    const fetchData = useCallback(async () => {
         try {
             setIsLoading(true);
-            const response = await axios.get(`${url_develope}/upload/`);
+            const response = await axios.get(`${url_develope}/upload/${userId}`);
             const dataImageUrl = response.data.map((item) => ({
                 ...item,
                 src: `http://localhost:3001/${item.fileLocation[0].src}`
-           
-              }));  
-             setData(dataImageUrl);
+            }));
+            setData(dataImageUrl);
         } catch (error) {
             console.error('Error fetching data:', error);
         } finally {
             setIsLoading(false);
         }
-    };
+    }, [userId]);
 
+    useEffect(() => {
+        if (userId) {
+            fetchData();
+        }
+    }, [userId, fetchData]);
+
+    
     const handleDelete = (photoId) => {
         swalConfirm("Are you sure?","Are you sure you want to delete this!", "warning", "Yess, Delete it")
         .then((result) => {
@@ -54,7 +67,7 @@ function Photos() {
 
     return (
         <>
-            <Sidebar />
+         <Sidebar />
             <div className='relative overflow-x-auto shadow-md sm:rounded-lg m-5'>
                 <div className='flex  justify-end m-4'>
                      <button
@@ -86,9 +99,8 @@ function Photos() {
                     <tbody>
                         {isLoading ? (
                             
-                                <tr className='fixed inset-0 z-50 flex items-center justify-center  w-full'>
                                     <Loading />
-                                </tr>
+                                
                             
                         ) : (
                             data.length > 0 ? (
@@ -109,9 +121,10 @@ function Photos() {
                                             src={item.src}
                                             alt={item.photoTittle}
                                             className="object-cover w-24 h-24 rounded-md"
-                                          />}</td>
+                                          />}
+                                          </td>
                                         <td className="px-6 py-4 flex gap-3">
-                                            <button onClick={() => { /* handleEdit */ }} className="font-medium text-blue-600 dark:text-blue-500 hover:underline">Edit</button>
+                                            <button onClick={() => navigate(`/updateUpload/${item.photoId}`)} className="font-medium text-blue-600 dark:text-blue-500 hover:underline">Edit</button>
                                             <button onClick={() => handleDelete(item.photoId)} className="font-medium text-blue-600 dark:text-blue-500 hover:underline">Delete</button>
                                         </td>
                                     </tr>

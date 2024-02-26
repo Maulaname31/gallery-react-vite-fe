@@ -80,97 +80,92 @@ function TableAccount() {
 
     
     return (
-      <>
-      <Sidebar/>
-        <div className="relative overflow-x-auto shadow-md sm:rounded-lg m-5">
+      <div>
+        <Sidebar/>
+        <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400 relative overflow-x-auto shadow-md sm:rounded-lg m-5">
             {isLoading && (
-            <div className='fixed inset-0 z-50 flex items-center justify-center bg-white bg-opacity-75 w-full'>
-                <Loading/>
-            </div>
-            )}
-            <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
-                <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
-                    <tr>
-                        <th scope="col" className="px-6 py-3">
-                            No
-                        </th>
-                        <th scope="col" className="px-6 py-3">
-                            Username
-                        </th>
-                        <th scope="col" className="px-6 py-3">
-                            Email
-                        </th>
-                        <th scope="col" className="px-6 py-3">
-                            Role
-                        </th>
-                        <th scope="col" className="px-6 py-3">
-                            
-                        </th>
-                        <th scope="col" className="px-6 py-3">
-                            Action
-                        </th>
-                    </tr>
-                </thead>
                 <tbody>
-                    {isLoading ? (
-                        <tr><td colSpan="5">Loading...</td></tr>
-                    ) : (
-                        data.length > 0 ? (
-                            data.map((item, index) => (
-                                <tr key={index} className='bg-white border-b dark:bg-gray-800 dark:border-gray-700'>
-                                    <td className="border-r p-2 px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">{++index}</td>
-                                    <td className="border-r p-2 px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">{item.username}</td>
-                                    <td className="border-r p-2">{item.email}</td>
-                                    <td className=" p-2">
-                                        <select
-                                            className="select select-accent w-full select-xs"
-                                            value={item.role} 
-                                            onChange={(event) => handleSelectRole(event.target.value, item.userId)}
-                                        >
-                                            <option value="user">user</option>
-                                            <option value="admin">admin</option>
-                                        </select>
-                                    </td>
-
-
-                                    <td className='border-r p-2'>
-                                        <>
-                                        <button
-                                        onClick={() => handleChangeRole(item.userId)}
-                                        className="btn btn-primary btn-sm"
-                                        >   
-                                        {isLoading ? 'Changing Role...' : 'Change Role'}
-                                        </button>
-                                      </>
-                                    </td>
-                                    <td className="border-r p-2 flex justify-center gap-3">
-                                        <>
-                                        <button
-                                        className="bg-indigo-500 text-white rounded-full p-3 inline-flex items-center justify-center focus:outline-none transform transition duration-300 hover:scale-110"
-                                        onClick={() => navigate(`/updateAcc/${item.userId}`, {replace:true})}
-                                        >
-                                        <i className="ri-edit-line" />
-                                        </button>
-
-                                        <button
-                                        onClick={() => handleDelete(item.userId)}
-                                        className="bg-red-500 text-white rounded-full p-3 inline-flex items-center justify-center focus:outline-none transform transition duration-300 hover:scale-110"
-                                        >
-                                        <i className="ri-delete-bin-line" />
-                                        </button>
-                                      </>
-
-                                     </td>
-                                </tr>
-                            ))
-                        ) : (
-                            <tr><td colSpan="5">No data available</td></tr>
-                        )
-                    )}  
+                    <tr><td colSpan="5">Loading...</td></tr>
                 </tbody>
-            </table>
-        </div>
-        </>
+            )}
+            <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                <tr>
+                    <th scope="col" className="px-6 py-3">
+                        No
+                    </th>
+                    <th scope="col" className="px-6 py-3">
+                        Username
+                    </th>
+                    <th scope="col" className="px-6 py-3">
+                        Email
+                    </th>
+                    <th scope="col" className="px-6 py-3">
+                        Role
+                    </th>
+                    <th scope="col" className="px-6 py-3">
+                        
+                    </th>
+                    <th scope="col" className="px-6 py-3">
+                        Action
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                {!isLoading && data.length > 0 ? (
+                    data.map((item, index) => (
+                        <tr key={index} className='bg-white border-b dark:bg-gray-800 dark:border-gray-700'>
+                            <td className="border-r p-2 px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">{++index}</td>
+                            <td className="border-r p-2 px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">{item.username}</td>
+                            <td className="border-r p-2">{item.email}</td>
+                            <td className=" p-2">
+                                <select
+                                    className="select select-accent w-full select-xs"
+                                    value={item.role} 
+                                    onChange={(event) => handleSelectRole(event.target.value, item.userId)}
+                                >
+                                    <option value="user">user</option>
+                                    <option value="admin">admin</option>
+                                </select>
+                            </td>
+    
+    
+                            <td className='border-r p-2'>
+                                <>
+                                <button
+                                onClick={() => handleChangeRole(item.userId)}
+                                className="btn btn-primary btn-sm"
+                                >   
+                                {isLoading ? 'Changing Role...' : 'Change Role'}
+                                </button>
+                              </>
+                            </td>
+                            <td className="border-r p-2 flex justify-center gap-3">
+                                <>
+                                <button
+                                className="bg-indigo-500 text-white rounded-full p-3 inline-flex items-center justify-center focus:outline-none transform transition duration-300 hover:scale-110"
+                                onClick={() => navigate(`/updateAcc/${item.userId}`, {replace:true})}
+                                >
+                                <i className="ri-edit-line" />
+                                </button>
+    
+                                <button
+                                onClick={() => handleDelete(item.userId)}
+                                className="bg-red-500 text-white rounded-full p-3 inline-flex items-center justify-center focus:outline-none transform transition duration-300 hover:scale-110"
+                                >
+                                <i className="ri-delete-bin-line" />
+                                </button>
+                              </>
+    
+                             </td>
+                        </tr>
+                    ))
+                ) : (
+                    <tr><td colSpan="5">No data available</td></tr>
+                )}
+            </tbody>
+        </table>
+    </div>
+    
     );
 }
 

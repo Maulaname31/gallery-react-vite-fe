@@ -42,13 +42,6 @@ function UpdateCategory({ handleModalEditClose, editData, handleEdit }) {
                                 onChange={handleInputChange}
                                 className="input input-bordered input-info w-full max-w-xs"
                             />
-                            <input
-                                type="text"
-                                name="description" 
-                                value={editedData.description || ''}
-                                onChange={handleInputChange}
-                                className="input input-bordered input-info w-full max-w-xs"
-                            />
                         </div>
                         <div className='flex justify-end m-4'>
                             <button className="btn btn-primary" type='submit'>Update</button>
