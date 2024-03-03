@@ -9,9 +9,10 @@ import Category from './pages/dashboard/category';
 import AccountUpdate from './pages/dashboard/components/action/accountUpdate';
 import Photos from './pages/dashboard/photos';
 import Upload from './pages/dashboard/components/action/uploadPhoto';
-import UploadUpdate from './pages/dashboard/components/action/uploadUpdate';
+import UploadUpdate from './pages/dashboard/components/action/photoUpdate';
 import CategoryPage from './pages/category/page';
 import ViewImage from './pages/view/page';
+import Album from './pages/dashboard/album';
 
 function App() {
   return (
@@ -30,6 +31,7 @@ function App() {
         <Route path='/uploadPhoto' element={<Upload/>}/>
         <Route path='/updateUpload/:photoId' element={<UploadUpdate/>}/>
         <Route path='/categoryPage/:categoryId' element={<CategoryPage/>}/>
+        <Route path='/album' element={<Album/>}/>
         </Route>
   </Routes>
 </Router>

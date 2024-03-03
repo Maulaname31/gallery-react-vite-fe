@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom'
 import axios from 'axios'
 import { url_develope } from '../../../../const'
 import { jwtDecode } from 'jwt-decode'
+import { swalSucces } from '../../../../components/alert'
 
 
 function UploadUpdate() {
@@ -25,6 +26,7 @@ function UploadUpdate() {
     const [notif, setNotif] = useState('');
     const [previewUrl, setPreviewUrl] = useState('')
     const navigate = useNavigate();
+
     const token = localStorage.getItem('jwtToken');
     const getUserId = () => {
       if (token) {
@@ -39,31 +41,37 @@ function UploadUpdate() {
         axios.get(`${url_develope}/upload/${photoId}`)
             .then(response => {
                 const photoData = response.data;
-                console.log(photoData)
+                const isoDate = new Date(photoData.uploadDate);
+                const formattedDate = isoDate.toISOString().split('T')[0];
+
                 setTittle(photoData.photoTittle);
                 setDescription(photoData.description);
-                setUploadDate(photoData.uploadDate);
-                setFileLocation({
-                    src: photoData.fileLocation[0].src,
-                    width: photoData.fileLocation[0].width,
-                    height: photoData.fileLocation[0].height
-                });
+                setUploadDate(formattedDate);
                 setSelectedCategories(photoData.categories);
+                if (photoData.fileLocation && photoData.fileLocation.length > 0) {
+                    const dataImageUrl = `http://localhost:3001/${photoData.fileLocation[0].src}`
+
+                    setFileLocation({
+                        src: photoData.fileLocation[0].src,
+                    });
+                    setPreviewUrl(dataImageUrl)
+                }
             })
             .catch(error => {
                 console.error('Error fetching data:', error);
             });
             
+
        axios.get(`${url_develope}/category/`)
             .then(response => {
-
-                setData(response.data);
+                const dataCategory = response.data
+                setData(dataCategory);
             })
             .catch(error => {
                 console.error('Error fetching data:', error);
             });
-    }, []);
 
+    }, [photoId]);
       
     const handleFileChange = (e) => {
         const file = e.target.files[0];
@@ -104,13 +112,19 @@ function UploadUpdate() {
         }
     };
 
-  
     const handleCategoryRemoval = (categoryIdToRemove) => {
         setSelectedCategories(selectedCategories.filter(category => category.categoryId !== categoryIdToRemove));
     };
 
     return (
-        <div className="flex justify-center items-center h-auto">
+        <div>
+            <a href='/photo' className="block mb-4 text-center text-xl my-5 mx-5">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" fill="rgba(13,169,242,1)">
+                <path fill="none" d="M0 0h24v24H0z"></path>
+                <path d="M5.82843 6.99955L8.36396 9.53509L6.94975 10.9493L2 5.99955L6.94975 1.0498L8.36396 2.46402L5.82843 4.99955H13C17.4183 4.99955 21 8.58127 21 12.9996C21 17.4178 17.4183 20.9996 13 20.9996H4V18.9996H13C16.3137 18.9996 19 16.3133 19 12.9996C19 9.68584 16.3137 6.99955 13 6.99955H5.82843Z"></path>
+            </svg>
+            </a>
+         <div className="flex justify-center items-center h-auto">
             <div className="card flex flex-col justify-center items-center  max-w-7xl shadow-2xl bg-base-100">
                 <form className="card-body">
                     {notif && (
@@ -190,12 +204,13 @@ function UploadUpdate() {
                             ))}
                         </select>
                         <div className="mt-2">
-                        {selectedCategories.map((category, index) => (
-                            <div key={index} className="flex items-center">
-                                <span className="mr-2">{category.nameCategory}</span>
-                                <i  onClick={() => handleCategoryRemoval(category.categoryId)} className="ri-delete-bin-fill cursor-pointer text-red-600 "></i>
+                        {selectedCategories && selectedCategories.map((category, index) => (
+                        <div key={index} className="flex items-center">
+                            <span className="mr-2">{category.nameCategory}</span>
+                            <i  onClick={() => handleCategoryRemoval(category.categoryId)} className="ri-delete-bin-fill cursor-pointer text-red-600 "></i>
                         </div>
-                        ))}
+                    ))}
+
                     </div>
                     </div>
 
@@ -220,6 +235,7 @@ function UploadUpdate() {
 
                 </form>
             </div>
+        </div>
         </div>
     );
 }

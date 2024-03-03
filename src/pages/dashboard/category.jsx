@@ -14,13 +14,10 @@ function TableCategory() {
     const [editData, setEditData] = useState('')
 
 
-    useEffect(() => {
-        fetchData()
-    }, []);
     const fetchData =()=>{
-    setIsLoading(true);
+        setIsLoading(true);
         axios.get(`${url_develope}/category/`)
-          .then(response => {
+        .then(response => {
             setData(response.data);
             setIsLoading(false); 
           })
@@ -48,7 +45,6 @@ function TableCategory() {
    
         });
         setCategoryName('');
-
         handleModalClose();
     };
 
@@ -71,7 +67,7 @@ function TableCategory() {
             }
         });
     }
-
+    
       const handleEdit = async (e, editedData, categoryId) => {
         e.preventDefault();
     
@@ -86,12 +82,12 @@ function TableCategory() {
           console.error('Error editing guest:', error);
           setTimeout(() => {}, 3000);
         }
-      };
+    };
 
 
-      const handleOpenModal = ()=>{
-         document.getElementById('addModal').showModal()
-       }
+    const handleOpenModal = ()=>{
+        document.getElementById('addModal').showModal()
+    }
        const handleModalClose = () => {
          document.getElementById('addModal').close();
      };
@@ -99,7 +95,6 @@ function TableCategory() {
       const handleOpenEditModal = ()=>{
          document.getElementById('editModal').showModal()
          
-
        }
        const handleModalEditClose = () => {
          document.getElementById('editModal').close();
@@ -107,13 +102,15 @@ function TableCategory() {
 
       
 
+     useEffect(() => {
+         fetchData()
+     }, []);
 
   return (
     <>
-
     <Sidebar/>
     <div className="relative overflow-x-auto shadow-md sm:rounded-lg m-5">
-                <div className='flex justify-center mb-5'>
+                <div className='flex justify-end'>
             <button className="btn btn-primary" onClick={handleOpenModal}>+ Category</button>
             <dialog id="addModal" className="modal">
                 <div className="modal-box">
@@ -143,7 +140,7 @@ function TableCategory() {
          editData={editData}
          handleEdit={handleEdit}/>
    
-            {isLoading ? <Loading /> : (
+          
             
            
     <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
@@ -162,7 +159,7 @@ function TableCategory() {
         </thead>
         <tbody>
     {isLoading ? (
-       <tr><td colSpan="5">Loading...</td></tr>
+       <Loading/>
     ) : (
         data.length > 0 ? (
             data.map((item, index) => (
@@ -173,9 +170,15 @@ function TableCategory() {
                     <td className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white    ">
                         {item.nameCategory}
                     </td>
-                    <td className="px-6 py-4 flex  gap-3">
-                        <a  onClick={() => {handleOpenEditModal(); setEditData(item)}} className="font-medium text-blue-600 dark:text-blue-500 hover:underline">Edit</a>
-                        <a  onClick={() => handleDelete(item.categoryId)} className="font-medium text-blue-600 dark:text-blue-500 hover:underline">Delete</a>
+
+                    <td className="px-6 py-4 whitespace-nowrap ">
+                        <button  onClick={() => {handleOpenEditModal(); setEditData(item)}} className="bg-blue-500 text-white rounded-md p-3 inline-flex items-center justify-center focus:outline-none transform transition duration-300 hover:scale-110" >
+                            <i className="ri-edit-line"></i>
+                        </button>
+
+                        <button onClick={() => handleDelete(item.categoryId)} className="ml-3 bg-red-500 text-white rounded-md p-3 inline-flex items-center justify-center focus:outline-none transform transition duration-300 hover:scale-110" >
+                            <i className="ri-delete-bin-line"></i>      
+                        </button>   
                     </td>
                 </tr>
             ))
@@ -188,7 +191,7 @@ function TableCategory() {
     </tbody>
 
     </table>
-     )}
+
 </div>
 </>
   )

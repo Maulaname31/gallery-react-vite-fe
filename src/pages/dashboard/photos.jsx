@@ -11,6 +11,7 @@ function Photos() {
     const [data, setData] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const navigate = useNavigate()
+
     const token = localStorage.getItem('jwtToken');
     const getUserId = () => {
       if (token) {
@@ -25,7 +26,7 @@ function Photos() {
     const fetchData = useCallback(async () => {
         try {
             setIsLoading(true);
-            const response = await axios.get(`${url_develope}/upload/${userId}`);
+            const response = await axios.get(`${url_develope}/upload/photo/${userId}`);
             const dataImageUrl = response.data.map((item) => ({
                 ...item,
                 src: `http://localhost:3001/${item.fileLocation[0].src}`
@@ -52,11 +53,26 @@ function Photos() {
                 setIsLoading(true);
                 axios.delete(`${url_develope}/upload/deletePhoto/${photoId}`)
                 .then(response => {
-                    console.log('Category deleted successfully:', response.data);
                     fetchData(); 
                 })
                 .catch(error => {
                     console.error('Error deleting category:', error);
+                })
+
+                axios.delete(`${url_develope}/comment/deleteCommentPhoto/${photoId}`)
+                .then(response => {
+                    fetchData(); 
+                })
+                .catch(error => {
+                    console.error('Error deleting photo:', error);
+                })
+
+                axios.delete(`${url_develope}/like/deleteLikePhoto/${photoId}`)
+                .then(response => {
+                    fetchData(); 
+                })
+                .catch(error => {
+                    console.error('Error deleting Like:', error);
                 })
                 .finally(() => {
                     setIsLoading(false);
@@ -98,10 +114,7 @@ function Photos() {
                     </thead>
                     <tbody>
                         {isLoading ? (
-                            
-                                    <Loading />
-                                
-                            
+                                    <Loading />  
                         ) : (
                             data.length > 0 ? (
                                 data.map((item, index) => (
@@ -123,15 +136,20 @@ function Photos() {
                                             className="object-cover w-24 h-24 rounded-md"
                                           />}
                                           </td>
-                                        <td className="px-6 py-4 flex gap-3">
-                                            <button onClick={() => navigate(`/updateUpload/${item.photoId}`)} className="font-medium text-blue-600 dark:text-blue-500 hover:underline">Edit</button>
-                                            <button onClick={() => handleDelete(item.photoId)} className="font-medium text-blue-600 dark:text-blue-500 hover:underline">Delete</button>
+                                        <td className="px-6 py-4 whitespace-nowrap ">
+                                            <button onClick={() => navigate(`/updateUpload/${item.photoId}`)} className="bg-blue-500 text-white rounded-md p-3 inline-flex items-center justify-center focus:outline-none transform transition duration-300 hover:scale-110" >
+                                            <i className="ri-edit-line"></i>
+                                            </button>
+
+                                            <button onClick={() => handleDelete(item.photoId)} className="ml-3 bg-red-500 text-white rounded-md p-3 inline-flex items-center justify-center focus:outline-none transform transition duration-300 hover:scale-110" >
+                                            <i className="ri-delete-bin-line"></i>
+                                            </button>   
                                         </td>
                                     </tr>
                                 ))
                             ) : (
                                 <tr>
-                                    <td colSpan="5">No data available</td>
+                                    <td className='text-center ' colSpan="5 ">No data available</td>
                                 </tr>
                             )
                         )}

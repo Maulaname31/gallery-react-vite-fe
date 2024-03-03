@@ -36,16 +36,20 @@ function Home() {
 
   return (
     <div className='h-auto'>
+      <div>
       <Nav />
-      <div className='p-4 mt-8 mx-auto my-auto shadow-md'>
+      </div>
+
+      <div className='p-4 mt-8 mx-5 my-auto shadow-2xl rounded-md'>
         <PhotoAlbum
-          className='rounded-lg'
+          className='rounded-xl'
           layout="rows"
           photos={post}
           targetRowHeight={150}
           onClick={(e) => {navigate(`/view/${e.photo.photoId}`)}}
           />
         </div>
+
         <div>
         <Footer />
       </div>

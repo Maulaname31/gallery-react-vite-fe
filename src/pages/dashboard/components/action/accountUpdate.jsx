@@ -19,7 +19,8 @@ function AccountUpdate() {
         axios
         .get(`${url_develope}/account/auth/${userId}`)
         .then((response) => {
-          const userData = response.data.user; 
+          const userData = response.data; 
+     
           setUsername(userData.username);
           setEmail(userData.email);
           setAddress(userData.address || ''); 

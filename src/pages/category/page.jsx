@@ -1,15 +1,17 @@
 import React,{useState, useEffect, useCallback} from 'react'
 import axios from 'axios'
-import { useParams } from 'react-router-dom'
+import { useParams, useNavigate } from 'react-router-dom'
 import { url_develope } from '../../const'
 import { PhotoAlbum } from 'react-photo-album'
 import Nav from '../../components/nav'
 import Footer from '../../components/footer'
 
 
+
 function CategoryPage() {
     const {categoryId} = useParams()
     const [categoryImage, setCategoryImage] = useState([])
+    const navigate = useNavigate()
 
   const fetchCategoryData = useCallback(async () => {
     try {
@@ -42,8 +44,8 @@ function CategoryPage() {
         layout="rows"
         photos={categoryImage}
         targetRowHeight={150}
-        onClick={({ index }) => setIndex(index)} 
-      />
+        onClick={(e) => {navigate(`/view/${e.photo.photoId}`)}}
+        />
       ):(
         <p className='text-center'>There are no images available for this category.</p>
       )}

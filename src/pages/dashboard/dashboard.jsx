@@ -114,9 +114,9 @@ function TableAccount() {
                 {!isLoading && data.length > 0 ? (
                     data.map((item, index) => (
                         <tr key={index} className='bg-white border-b dark:bg-gray-800 dark:border-gray-700'>
-                            <td className="border-r p-2 px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">{++index}</td>
-                            <td className="border-r p-2 px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">{item.username}</td>
-                            <td className="border-r p-2">{item.email}</td>
+                            <td className=" p-2 px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">{++index}</td>
+                            <td className=" p-2 px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">{item.username}</td>
+                            <td className=" p-2">{item.email}</td>
                             <td className=" p-2">
                                 <select
                                     className="select select-accent w-full select-xs"
@@ -129,7 +129,7 @@ function TableAccount() {
                             </td>
     
     
-                            <td className='border-r p-2'>
+                            <td className=' p-2'>
                                 <>
                                 <button
                                 onClick={() => handleChangeRole(item.userId)}
@@ -139,19 +139,17 @@ function TableAccount() {
                                 </button>
                               </>
                             </td>
-                            <td className="border-r p-2 flex justify-center gap-3">
+                            <td className=" p-2 whitespace-nowrap">
                                 <>
                                 <button
-                                className="bg-indigo-500 text-white rounded-full p-3 inline-flex items-center justify-center focus:outline-none transform transition duration-300 hover:scale-110"
-                                onClick={() => navigate(`/updateAcc/${item.userId}`, {replace:true})}
-                                >
+                                className="bg-indigo-500 text-white rounded-md mr-3 p-3 inline-flex items-center justify-center focus:outline-none transform transition duration-300 hover:scale-110"
+                                onClick={() => navigate(`/updateAcc/${item.userId}`, {replace:true})}>
                                 <i className="ri-edit-line" />
                                 </button>
-    
+
                                 <button
                                 onClick={() => handleDelete(item.userId)}
-                                className="bg-red-500 text-white rounded-full p-3 inline-flex items-center justify-center focus:outline-none transform transition duration-300 hover:scale-110"
-                                >
+                                className="bg-red-500 text-white rounded-md p-3 inline-flex items-center justify-center focus:outline-none transform transition duration-300 hover:scale-110">
                                 <i className="ri-delete-bin-line" />
                                 </button>
                               </>
