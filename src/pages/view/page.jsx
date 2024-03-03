@@ -13,7 +13,8 @@ function ViewImage() {
   const [userData, setUserData] = useState([])
   const [commentData, setCommentData] = useState([])
   const [contentComment, setcontentComment] = useState('')
-  const [openDropdownIndex, setOpenDropdownIndex] = useState(null);
+  const [ openActionComment, setOpenActionComment] = useState(null);
+  const [ openActionPhoto, setOpenActionPhoto] = useState(null);
   const [likes, setLikes] = useState(0)
   const [userLiked, setUserLiked] = useState(false)
   const navigate = useNavigate()
@@ -121,9 +122,13 @@ function ViewImage() {
 
     }
     
-    const handleToggleDropdown = (index) => {
-      setOpenDropdownIndex(index === openDropdownIndex ? null : index);
+    const hadnleActionComment = (index) => {
+      setOpenActionComment(index === openActionComment ? null : index);
     };
+    const handleActionPhoto = (index) => {
+      setOpenActionPhoto(index === openActionPhoto ? null : index);
+    };
+ 
 
     const handleDelete = (commentId) => {
       swalConfirm("Are you sure?","Are you sure you want to delete this!", "warning", "Yess, Delete it")
@@ -189,12 +194,12 @@ function ViewImage() {
       </svg>
     </a>
     <div className="max-w-5xl mx-auto m-3">
-     
         <div className="bg-[#7077A1] rounded-lg shadow-lg overflow-hidden flex flex-col md:flex-row">
           <div className="md:w-1/2 m-7 ">
             <img src={imageSrc} alt="Gambar" className="w-full h-auto rounded-xl" />
           </div>
           <div className="md:w-1/2">
+                
             <div className="p-6">
               <h2 className="text-2xl font-bold text-gray-800 mb-2">{photoData.photoTittle}</h2>
               <p className="text-gray-800 ">{photoData.description}</p>
@@ -229,16 +234,14 @@ function ViewImage() {
                   <span className="font-bold text-gray-800">{item.userName}</span>
                   <p className="text-sm text-gray-800">{item.contentComment}</p>
                 </div>
+                
                 <div className="ml-auto">
-                  
                 {isCurrentUser(item.userId) && (
-                <button onClick={() => handleToggleDropdown(index)} className="text-gray-500 hover:text-gray-700 focus:outline-none">
-                  <svg className="w-5 h-5" viewBox="0 0 20 20" fill="currentColor">
-                    <path fillRule="evenodd" d="M10 12a2 2 0 100-4 2 2 0 000 4zm-2 2a2 2 0 114 0 2 2 0 01-4 0zm2 6a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd" />
-                  </svg>
+                <button onClick={() => hadnleActionComment(index)} className="text-gray-800 hover:text-gray-700 focus:outline-none">
+                  <i className="ri-more-2-fill"></i>
                 </button>
               )}
-              {openDropdownIndex === index && (
+              {openActionComment === index && (
                         <div className="absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-50">
                           <div className="py-1">
                             <button onClick={handleEdit} className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900 w-full text-left">Edit</button>

@@ -34,20 +34,20 @@ function UpdateAlbum({ handleModalEditClose, editData, handleEdit }) {
                     <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2" onClick={handleModalEditClose}>✕</button>
                     <form method="dialog" onSubmit={handleSubmit}>
                         <h3 className="font-bold text-lg mb-3">Edit Category</h3>
-                        <div className='flex justify-center gap-4'>
+                        <div className='flex justify-center  my-5'>
                             <input
                                 type="text"
-                                name="nameCategory" 
+                                name="albumName" 
                                 value={editedData.albumName || ''}
                                 onChange={handleInputChange}
                                 className="input input-bordered input-info w-full max-w-xs"
                             />
                         </div>
 
-                        <div className='flex justify-center gap-4'>
-                            <input
+                        <div className='flex justify-center '>
+                            <textarea
                                 type="text"
-                                name="nameCategory" 
+                                name="description" 
                                 value={editedData.description || ''}
                                 onChange={handleInputChange}
                                 className="input input-bordered input-info w-full max-w-xs"

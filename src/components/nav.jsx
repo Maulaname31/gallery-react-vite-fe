@@ -9,7 +9,8 @@ import { jwtDecode } from 'jwt-decode';
 function Nav() {
 const navigate = useNavigate();
 const jwt = localStorage.getItem('jwtToken')
-const [data, setData] = useState([])
+const [dataCategory, setDataCategory] = useState([])
+const [dataAlbum, setDataAlbum] = useState([])
 
   const token = localStorage.getItem('jwtToken');
   const getUserInfo = () => {
@@ -28,10 +29,18 @@ const [data, setData] = useState([])
 useEffect(() =>{
   axios.get(`${url_develope}/category/`)
   .then(response =>{
-    setData(response.data);
+    setDataCategory(response.data);
   }).catch(err =>[
     console.error('Error fetching Category', err)
   ])
+
+  axios.get(`${url_develope}/album/`)
+  .then(response =>{
+    setDataAlbum(response.data);
+  }).catch(err =>[
+    console.error('Error fetching Category', err)
+  ])
+
 },[])
 
 const handleLogout = () =>{
@@ -62,7 +71,7 @@ const handleCategoryClick = (categoryId) =>{
           <a>Category</a> 
           <ul className="p-2">
           <li><Link to='/'>All</Link></li>
-            {data.map((item, index) => (        
+            {dataCategory.map((item, index) => (        
               <li key={index}><button onClick={()=> handleCategoryClick(item.categoryId)}>
                 {item.nameCategory}
                 </button>
@@ -72,13 +81,18 @@ const handleCategoryClick = (categoryId) =>{
         </li>
           {jwt && (
               <>
-                <li>
-                  <a>Album</a>
-                  <ul className="p-2">
-                    <li><Link to=''>+ album </Link></li>
-                    <li><Link to=''>Submenu 2</Link></li>
-                  </ul>
-                </li>
+          <li>
+            <a>Album</a> 
+            <ul className="p-2">
+            <li><Link to='/'>All</Link></li>
+              {dataAlbum.map((item, index) => (        
+                <li key={index}><button onClick={()=> handleCategoryClick(item.albumId)}>
+                  {item.albumName}
+                  </button>
+              </li> 
+              ))}
+            </ul>
+          </li>
               </>
             )}
           <li><Link to=''>About</Link></li>
@@ -94,8 +108,9 @@ const handleCategoryClick = (categoryId) =>{
             <summary>Category</summary>
             <ul className="p-2">
               <li><Link to='/'>All</Link></li>
-            {data.map((item, index) => (    
-              <li key={index}><button onClick={()=> handleCategoryClick(item.categoryId)}>
+            {dataCategory.map((item, index) => (    
+              <li key={index}>
+                <button onClick={()=> handleCategoryClick(item.categoryId)}>
                 {item.nameCategory}
                 </button>
               </li> 
@@ -105,16 +120,21 @@ const handleCategoryClick = (categoryId) =>{
         </li>
         {jwt && (
             <>
-              <li>
-                <details>
-                  <summary>Album</summary>
-                  <ul className="p-2">
-                    <li><Link to=''>+ album</Link></li>
-                    <li><Link to=''>Submenu 2</Link></li>
-                  </ul>
-                </details>
-              </li>
-
+            <li>
+              <details>
+                <summary>Album</summary>
+                <ul className="p-2">
+                  <li><Link to='/'>All</Link></li>
+                {dataAlbum.map((item, index) => (    
+                  <li key={index}>
+                    <button onClick={()=> handleCategoryClick(item.albumId)}>
+                    {item.albumName}
+                    </button>
+                  </li> 
+                ))}
+              </ul>
+              </details>
+            </li>
             </>
           )}
         <li><Link to=''>About</Link></li>

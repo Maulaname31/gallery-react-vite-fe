@@ -113,17 +113,17 @@ function Album() {
                     <form method="dialog" onSubmit={handleSubmit}>
                         <h3 className="font-bold text-lg mb-3">Add Album</h3>
 
-                        <div className='flex justify-center gap-4'>
+                        <div className='flex justify-center my-5'>
                             <input 
                                 type="text" 
-                                placeholder="Category Name" 
+                                placeholder="Album Name" 
                                 value={albumName}
                                 onChange={(e)=> setAlbumName(e.target.value)}
                                 className="input input-bordered input-info w-full max-w-xs"
                             />
                         </div>
                         <div className='flex justify-center '>
-                            <input 
+                            <textarea 
                                 type="text" 
                                 placeholder="description" 
                                 value={description}

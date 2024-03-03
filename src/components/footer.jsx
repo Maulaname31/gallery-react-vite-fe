@@ -6,7 +6,7 @@ function Footer() {
 <footer className="footer p-10 bg-[#2D3250] text-neutral-content mt-36">
   <aside>
     <img src={Logo} alt=""  width='100' height='100'  style={{ filter: 'grayscale(100%)' }}/>
-    <p>HEROTRE Industries Inc.<br/>Providing reliable tech since 1992</p>
+    <p>HEROTRE <br/>Providing reliable tech since 2077</p>
   </aside> 
   <nav>
     <h6 className="footer-title">Social</h6> 
