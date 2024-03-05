@@ -59,7 +59,7 @@ const handleCategoryClick = (categoryId) =>{
 }
 
   return (
-    <div className="navbar bg-[#2D3250] shadow-md">
+    <div className="navbar bg-[#2D3250] shadow-md ">
     <div className="navbar-start">
       <div className="dropdown">
         <div tabIndex={0} role="button" className="btn btn-ghost lg:hidden">
@@ -106,7 +106,7 @@ const handleCategoryClick = (categoryId) =>{
         <li>
           <details>
             <summary>Category</summary>
-            <ul className="p-2">
+            <ul className="p-2 ">
               <li><Link to='/'>All</Link></li>
             {dataCategory.map((item, index) => (    
               <li key={index}>
@@ -123,7 +123,7 @@ const handleCategoryClick = (categoryId) =>{
             <li>
               <details>
                 <summary>Album</summary>
-                <ul className="p-2">
+                <ul className="p-2 ">
                   <li><Link to='/'>All</Link></li>
                 {dataAlbum.map((item, index) => (    
                   <li key={index}>
@@ -144,7 +144,7 @@ const handleCategoryClick = (categoryId) =>{
 
       {jwt ? (
           <>
-          <p className='mr-3'>Hallo 👋 , <i>{userInfo.username ? userInfo.username : ''}</i></p>
+          <p className='mr-3'> <i>{userInfo.username ? userInfo.username : ''}</i></p>
         <div className='dropdown dropdown-end'>
      <div tabIndex={0} role="button" className="btn btn-ghost btn-circle avatar">
         <div className="w-10 rounded-full">

@@ -14,6 +14,7 @@ import CategoryPage from './pages/category/page';
 import ViewImage from './pages/view/page';
 import Album from './pages/dashboard/album';
 
+
 function App() {
   return (
 <Router>
@@ -22,6 +23,7 @@ function App() {
         <Route path='/view/:photoId' element={<ViewImage/>}/>
         <Route path='/login' element={<LoginPage/>}/>
        <Route path='/register' element={<RegisterPage/>}/>
+
 
         <Route element={<PrivateRoute />}>
         <Route path='/categoryTable' element={<Category/>}/>
@@ -32,6 +34,8 @@ function App() {
         <Route path='/updateUpload/:photoId' element={<UploadUpdate/>}/>
         <Route path='/categoryPage/:categoryId' element={<CategoryPage/>}/>
         <Route path='/album' element={<Album/>}/>
+
+        
         </Route>
   </Routes>
 </Router>
