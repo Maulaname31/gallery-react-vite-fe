@@ -59,7 +59,7 @@ const handleCategoryClick = (categoryId) =>{
 }
 
   return (
-    <div className="navbar bg-[#2D3250] shadow-md ">
+    <div className="navbar bg-[#2D3250] shadow-md z-[999] ">
     <div className="navbar-start">
       <div className="dropdown">
         <div tabIndex={0} role="button" className="btn btn-ghost lg:hidden">
@@ -82,7 +82,7 @@ const handleCategoryClick = (categoryId) =>{
           {jwt && (
               <>
           <li>
-            <a>Album</a> 
+            <Link to='/viewAlbum'>Album</Link> 
             <ul className="p-2">
             <li><Link to='/'>All</Link></li>
               {dataAlbum.map((item, index) => (        
@@ -103,7 +103,7 @@ const handleCategoryClick = (categoryId) =>{
     <div className="navbar-center hidden lg:flex">
       <ul className="menu menu-horizontal px-1">
         <li><Link to='/'>Home</Link></li>
-        <li>
+        {/* <li>
           <details>
             <summary>Category</summary>
             <ul className="p-2 ">
@@ -117,23 +117,11 @@ const handleCategoryClick = (categoryId) =>{
             ))}
           </ul>
           </details>
-        </li>
+        </li> */}
         {jwt && (
             <>
             <li>
-              <details>
-                <summary>Album</summary>
-                <ul className="p-2 ">
-                  <li><Link to='/'>All</Link></li>
-                {dataAlbum.map((item, index) => (    
-                  <li key={index}>
-                    <button onClick={()=> handleCategoryClick(item.albumId)}>
-                    {item.albumName}
-                    </button>
-                  </li> 
-                ))}
-              </ul>
-              </details>
+                <Link to='/viewAlbum'>Album</Link>
             </li>
             </>
           )}
@@ -153,17 +141,17 @@ const handleCategoryClick = (categoryId) =>{
       </div>
       <ul tabIndex={0} className="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52">
         <li>
-          <Link className="justify-between">
-            Profile
-            <span className="badge">New</span>
+          <Link >
+          <i className="ri-user-4-line"></i>Profile
+          
           </Link>
         </li>
         {userInfo.role === 'user' ? (
-          <li><Link to='/photo'>Dashboard</Link></li>
+          <li><Link to='/photo'><i className="ri-dashboard-line"></i>Dashboard</Link></li>
           ):(    
             <li><Link to='/dashboard'>Dashboard</Link></li>
         )}
-        <li onClick={handleLogout}><Link>Logout</Link> </li>
+        <li onClick={handleLogout}><Link><i className="ri-logout-box-line"></i>Logout</Link> </li>
       </ul>
      </div>
      </>

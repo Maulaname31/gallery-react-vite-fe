@@ -67,7 +67,7 @@ function Sidebar() {
         )}
 
         <hr className='mt-11 mb-3' />
-        <li onClick={handleLogout}><a>LogOut</a></li>
+        <li onClick={handleLogout}><a><i className="ri-logout-box-line"></i>LogOut</a></li>
       </ul>
     </div>
       </div>

@@ -13,6 +13,8 @@ import UploadUpdate from './pages/dashboard/components/action/photoUpdate';
 import CategoryPage from './pages/category/page';
 import ViewImage from './pages/view/page';
 import Album from './pages/dashboard/album';
+import ViewAlbum from './pages/album/page'
+import ViewPhoto from './pages/album/photoAlbum'
 
 
 function App() {
@@ -33,6 +35,8 @@ function App() {
         <Route path='/uploadPhoto' element={<Upload/>}/>
         <Route path='/updateUpload/:photoId' element={<UploadUpdate/>}/>
         <Route path='/categoryPage/:categoryId' element={<CategoryPage/>}/>
+        <Route path='/viewAlbum' element={<ViewAlbum/>}/>
+        <Route path='/viewAlbum/photo/:albumId' element={<ViewPhoto/>}/>
         <Route path='/album' element={<Album/>}/>
 
         

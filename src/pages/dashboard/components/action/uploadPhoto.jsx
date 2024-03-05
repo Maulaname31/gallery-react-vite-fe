@@ -57,7 +57,7 @@ function Upload() {
         const data = new FormData();    
         data.append('photoTittle', tittle);
         data.append('description', description);
-        data.append('uploadData', uploadDate);
+        data.append('uploadData',uploadDate);
         data.append('src', fileLocation);
         data.append('userId', userID);
         data.append('selectedCategories', JSON.stringify(selectedCategories));
@@ -86,6 +86,15 @@ function Upload() {
                 console.error('Error fetching data:', error);
             });
     }, []);
+
+    const handleCategoryChange = (e) => {
+        const selected = e.currentTarget.value;
+        if (selected.length > 0 && !selectedCategories.find(v => v.categoryId == selected)) {
+            const selectedCategory = data.find(v => v.categoryId == selected);
+            setSelectedCategories([...selectedCategories, selectedCategory]);
+            setC(""); // Reset dropdown
+        }
+    };
   
     const handleCategoryRemoval = (categoryIdToRemove) => {
         setSelectedCategories(selectedCategories.filter(category => category.categoryId !== categoryIdToRemove));
@@ -168,6 +177,7 @@ function Upload() {
                      <div>
                         <select value={c} onChange={(e) => {
                             const selected = e.currentTarget.value;
+                            console.log(JSON.stringify(selectedCategories))
                             if (selected.length > 0 && !selectedCategories.find(v => v.categoryId == selected)){
                                 setSelectedCategories([...selectedCategories, data.find(v => v.categoryId == selected)]);
                                 setC("");
@@ -195,10 +205,11 @@ function Upload() {
                         </label>
                         <input
                             type="date" 
-                            value={uploadDate}
+                            value={new Date().toISOString().substr(0,10)}
                             onChange={(e) => setUploadDate(e.target.value)}
                             id="uploadDate"
                             className="input input-bordered" 
+                            disabled
                             required 
                         />
                     </div>

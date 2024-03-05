@@ -3,7 +3,7 @@ import Logo from '../assets/logo.png'
 
 function Footer() {
   return (
-<footer className="footer p-10 bg-[#2D3250] text-neutral-content mt-36">
+<footer className="footer p-10 bg-[#2D3250] text-neutral-content mt-52">
   <aside>
     <img src={Logo} alt=""  width='100' height='100'  style={{ filter: 'grayscale(100%)' }}/>
     <p>HEROTRE <br/>Providing reliable tech since 2077</p>

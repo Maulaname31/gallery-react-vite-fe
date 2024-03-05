@@ -5,6 +5,7 @@ import { url_develope } from '../../const';
 import Loading from '../../components/loading';
 import { swalConfirm,swalSucces } from '../../components/alert';
 import UpdateAlbum from './components/action/albumUpdate';
+import { jwtDecode } from 'jwt-decode';
 
 
 
@@ -14,10 +15,19 @@ function Album() {
     const [description, setDescription] = useState('')
     const [isLoading, setIsLoading] = useState(false)
     const [editData, setEditData] = useState('')
+    const token = localStorage.getItem('jwtToken');
+    const getUserId = () => {
+      if (token) {
+        const decode = jwtDecode(token);
+        return decode.userId;
+      }
+      return null;
+    };
+    const userId = getUserId();
 
     const fetchData =()=>{
         setIsLoading(true);
-        axios.get(`${url_develope}/album/`)
+        axios.get(`${url_develope}/album/user/${userId}`)
         .then(response => {
             setData(response.data);
             setIsLoading(false); 
@@ -34,7 +44,8 @@ function Album() {
         setIsLoading(true)
         axios.post(`${url_develope}/album/createAlbum`, {
             albumName: albumName,
-            description: description
+            description: description,
+            userId: userId
         })
         
         .then(response => {
@@ -125,10 +136,10 @@ function Album() {
                         <div className='flex justify-center '>
                             <textarea 
                                 type="text" 
-                                placeholder="description" 
+                                placeholder="(Optional)" 
                                 value={description}
                                 onChange={(e)=> setDescription(e.target.value)}
-                                className="input input-bordered input-info w-full max-w-xs"
+                                className="textarea-sm input input-bordered input-info w-full max-w-xs"
                             />
                         </div>
                         <div className='flex justify-end m-4'>

@@ -6,6 +6,8 @@ import axios from 'axios';
 import { PhotoAlbum } from 'react-photo-album';
 import { useNavigate } from 'react-router-dom';
 import { swalSucces } from '../components/alert';
+import { jwtDecode } from 'jwt-decode';
+import { swalConfirm } from '../components/alert';
 
 
 
@@ -15,6 +17,15 @@ function Home() {
   const [selectedPhotoId, setSelectedPhotoId] = useState('')
   const navigate = useNavigate()
 
+  const token = localStorage.getItem('jwtToken');
+  const getUserId = () => {
+    if (token) {
+      const decode = jwtDecode(token);
+      return decode.userId;
+    }
+    return null;
+  };
+  const userId = getUserId();
 
   const fetchPostData = useCallback(async () => {
     try {
@@ -36,7 +47,7 @@ function Home() {
 
   const fetchAlbum =()=>{
 
-    axios.get(`${url_develope}/album/`)
+    axios.get(`${url_develope}/album/user/${userId}`)
     .then(response => {
       const data = response.data
         setDataAlbum(data);
@@ -47,6 +58,39 @@ function Home() {
 
       });
     }
+    const handleDelete = (photoId) => {
+      swalConfirm("Are you sure?","Are you sure you want to delete this!", "warning", "Yess, Delete it")
+      .then((result) => {
+          if (result.isConfirmed) {
+ 
+              axios.delete(`${url_develope}/upload/deletePhoto/${photoId}`)
+              .then(response => {
+                  fetchPostData(); 
+              })
+              .catch(error => {
+                  console.error('Error deleting category:', error);
+              })
+
+              axios.delete(`${url_develope}/comment/deleteCommentPhoto/${photoId}`)
+              .then(response => {
+                  fetchPostData(); 
+              })
+              .catch(error => {
+                  console.error('Error deleting photo:', error);
+              })
+
+              axios.delete(`${url_develope}/like/deleteLikePhoto/${photoId}`)
+              .then(response => {
+                  fetchPostData(); 
+              })
+              .catch(error => {
+                  console.error('Error deleting Like:', error);
+              })
+              .finally(() => {
+              });
+          }
+      });
+  }
 
   const showModal = (photoId) =>{
     setSelectedPhotoId(photoId)
@@ -85,25 +129,30 @@ function Home() {
 
       </div>
 
-      <div className='p-4 mt-8 mx-5 my-auto shadow-2xl rounded-md'>
+      <div className='relative p-4 mt-8 mx-5 my-auto shadow-2xl rounded-md'>
       <PhotoAlbum
         layout="rows"
         photos={post}
         onClick={(e) => {navigate(`/view/${e.photo.photoId}`)}}
         renderPhoto={({ photo, wrapperStyle, renderDefaultPhoto }) => (
-            <div className='transition duration-300 transform relative inset-0 hover:scale-95 ' style={{ ...wrapperStyle }}>
+          <>
+          <div className='relative transition duration-300 transform inset-0 hover:scale-95 ' style={{ ...wrapperStyle }}>
+              {renderDefaultPhoto({ wrapped: true })}
                 <div className="absolute top-0 right-0 mr-2 mt-2 text-white">
                     <div className="dropdown dropdown-left">
                         <div tabIndex={0} role="button" className=" p-2 rounded-full hover:bg-zinc-700"><i className="ri-more-fill"></i></div>
                         <ul tabIndex={0} className="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52">
-                            <li><a>Download</a></li>
-                            <li onClick={() => {navigate(`/view/${photo.photoId}`);}}><a>View</a></li>
-                            <li onClick={() => showModal(photo.photoId)}><a>Save to album</a></li>
+                            <li><a><i className="ri-download-2-line"></i>Download</a></li>
+                            <li onClick={() => {navigate(`/view/${photo.photoId}`);}}><a><i className="ri-eye-line"></i>View</a></li>
+                            <li onClick={() => showModal(photo.photoId)}><a><i className="ri-play-list-add-line"></i>Save to album</a></li>
+                            {photo.userId === userId && (
+                                <li onClick={() => handleDelete(photo.photoId)} ><a><i className="ri-delete-bin-6-line"></i>Delete</a></li>
+                            )}
                         </ul>
                     </div>
                 </div>
-                {renderDefaultPhoto({ wrapped: true })}
             </div>
+            </>
         )}
     />
     <dialog id="my_modal_3" className="modal">
@@ -115,9 +164,12 @@ function Home() {
                 <p className="py-4 font-semibold">All albums: {dataAlbum.length}</p>
                 <div className="overflow-auto max-h-80"> 
                     {dataAlbum.map((album, index) => (
-                        <div key={index} className="my-2 block max-w-full p-4 bg-red-300 border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
-                            <p className='text-lg'>{album.albumName}</p>
-                            <p className='text-gray-300'>{album.description}</p>
+                          <div  
+                          key={index} 
+                          className="my-2 block max-w-full p-4 bg-red-300 border border-gray-200 rounded-lg shadow cursor-pointer hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700"
+                          onClick={() => handleAddphotoAlbum(album.albumId)}>                       
+                           <p className='text-lg'>{album.albumName}</p>
+                          <p className='text-gray-300'>Photo: </p>
                         </div>
                     ))}
                 </div>

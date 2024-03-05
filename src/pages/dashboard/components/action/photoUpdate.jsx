@@ -43,7 +43,6 @@ function UploadUpdate() {
                 const photoData = response.data;
                 const isoDate = new Date(photoData.uploadDate);
                 const formattedDate = isoDate.toISOString().split('T')[0];
-
                 setTittle(photoData.photoTittle);
                 setDescription(photoData.description);
                 setUploadDate(formattedDate);
@@ -93,10 +92,10 @@ function UploadUpdate() {
         const data = new FormData();    
         data.append('photoTittle', tittle);
         data.append('description', description);
-        data.append('uploadData', uploadDate);
+        data.append('uploadDate', uploadDate);
         data.append('src', fileLocation);
         data.append('userId', userID);
-        data.append('selectedCategories', JSON.stringify(selectedCategories));
+        data.append('categories', JSON.stringify(selectedCategories));
 
         try {
             const response = await axios.put(`${url_develope}/upload/updatePhoto/${photoId}`, data, {
@@ -104,11 +103,21 @@ function UploadUpdate() {
                     'Content-Type':  'multipart/form-data',
                 }
             });
-            swalSucces('Success',"Category created successfully", "success")
+            console.log(response)
+            swalSucces('Success',"update Photo successfully", "success")
             navigate('/photo');
         } catch (error) {
             console.error('Error uploading photo:', error);
             setNotif('Upload failed. Please try again.'); 
+        }
+    };
+
+    const handleCategoryChange = (e) => {
+        const selected = e.currentTarget.value;
+        if (selected.length > 0 && !selectedCategories.find(v => v.categoryId == selected)) {
+            const selectedCategory = data.find(v => v.categoryId == selected);
+            setSelectedCategories([...selectedCategories, selectedCategory]);
+            setC("");
         }
     };
 
@@ -128,7 +137,7 @@ function UploadUpdate() {
             <div className="card flex flex-col justify-center items-center  max-w-7xl shadow-2xl bg-base-100">
                 <form className="card-body">
                     {notif && (
-                        <div role="alert" className="alert alert-success mt-2">
+                        <div role="alert" className="alert alert-error mt-2">
                             <svg xmlns="http://www.w3.org/2000/svg" className="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                             </svg>
@@ -191,28 +200,21 @@ function UploadUpdate() {
                     </div>
 
                      <div>
-                        <select value={c} onChange={(e) => {
-                            const selected = e.currentTarget.value;
-                            if (selected.length > 0 && !selectedCategories.find(v => v.categoryId == selected)){
-                                setSelectedCategories([...selectedCategories, data.find(v => v.categoryId == selected)]);
-                                setC("");
-                            } 
-                          }} className="select select-bordered select-xs w-full max-w-xs">
+                        <select value={c} onChange={handleCategoryChange} className="select select-bordered select-xs w-full max-w-xs">
                             <option disabled value=''>Select Category</option>
                             {data.map((item, index) => (
                                 <option key={index} value={item.categoryId}>{item.nameCategory}</option>
                             ))}
                         </select>
-                        <div className="mt-2">
+                      <div className="mt-2">
                         {selectedCategories && selectedCategories.map((category, index) => (
                         <div key={index} className="flex items-center">
                             <span className="mr-2">{category.nameCategory}</span>
                             <i  onClick={() => handleCategoryRemoval(category.categoryId)} className="ri-delete-bin-fill cursor-pointer text-red-600 "></i>
                         </div>
                     ))}
-
                     </div>
-                    </div>
+                 </div>
 
 
                     <div className="form-control">
@@ -221,7 +223,7 @@ function UploadUpdate() {
                         </label>
                         <input
                             type="date" 
-                            value={uploadDate || ''}
+                            value={ uploadDate || ''}
                             onChange={(e) => setUploadDate(e.target.value)}
                             id="uploadDate"
                             className="input input-bordered" 
