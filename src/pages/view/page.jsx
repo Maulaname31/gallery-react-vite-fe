@@ -184,6 +184,7 @@ function ViewImage() {
     fetchImage(photoId);
   }, [photoId]);
 
+
     
   return (
     <div className="container mx-auto px-4 py-8">
@@ -210,7 +211,7 @@ function ViewImage() {
                 </span>
               ))}
             </p>
-              <p className="text-gray-400 mb-4">{new Date(photoData.uploadDate).toLocaleDateString('id-ID')}</p>
+              <p className="text-gray-400 mb-4">{new Date(photoData.updatedAt).toLocaleDateString('id-ID')}</p>
               <div className="text-gray-700 flex justify-between items-center mb-4">
               <p className="mr-2">Uploader: {userData.username}</p>
                <div className='flex items-center flex-col'>

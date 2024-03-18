@@ -9,8 +9,7 @@ import { swalSucces } from '../../../../components/alert';
 function Upload() {
     const [data, setData] = useState([]);
     const [tittle, setTittle] = useState('');
-    const [description, setDescription] = useState('');
-    const [uploadDate, setUploadDate] = useState('');
+    const [description, setDescription] = useState('');             
     const [fileLocation, setFileLocation] = useState({
       src:'',
       width:'',
@@ -57,7 +56,6 @@ function Upload() {
         const data = new FormData();    
         data.append('photoTittle', tittle);
         data.append('description', description);
-        data.append('uploadData',uploadDate);
         data.append('src', fileLocation);
         data.append('userId', userID);
         data.append('selectedCategories', JSON.stringify(selectedCategories));
@@ -177,7 +175,6 @@ function Upload() {
                      <div>
                         <select value={c} onChange={(e) => {
                             const selected = e.currentTarget.value;
-                            console.log(JSON.stringify(selectedCategories))
                             if (selected.length > 0 && !selectedCategories.find(v => v.categoryId == selected)){
                                 setSelectedCategories([...selectedCategories, data.find(v => v.categoryId == selected)]);
                                 setC("");
@@ -196,22 +193,6 @@ function Upload() {
                         </div>
                         ))}
                     </div>
-                    </div>
-
-
-                    <div className="form-control">
-                        <label className="label">
-                            <span className="label-text">Date</span>
-                        </label>
-                        <input
-                            type="date" 
-                            value={new Date().toISOString().substr(0,10)}
-                            onChange={(e) => setUploadDate(e.target.value)}
-                            id="uploadDate"
-                            className="input input-bordered" 
-                            disabled
-                            required 
-                        />
                     </div>
 
                     <div className="form-control mt-6">

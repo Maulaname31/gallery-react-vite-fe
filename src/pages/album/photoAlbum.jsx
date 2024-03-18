@@ -100,7 +100,7 @@ function ViewAlbum() {
         </div>
       ) : (
         <div className="text-center text-gray-500">No photos in this album yet</div>
-      )}
+      )}  
             </>
         )}
     />

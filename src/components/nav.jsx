@@ -62,7 +62,7 @@ const handleCategoryClick = (categoryId) =>{
     <div className="navbar bg-[#2D3250] shadow-md z-[999] ">
     <div className="navbar-start">
       <div className="dropdown">
-        <div tabIndex={0} role="button" className="btn btn-ghost lg:hidden">
+        <div tabIndex={0} role="button" className="btn btn-ghost ">
           <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h8m-8 6h16" /></svg>
         </div>
         <ul tabIndex={0} className="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52">
@@ -149,7 +149,7 @@ const handleCategoryClick = (categoryId) =>{
         {userInfo.role === 'user' ? (
           <li><Link to='/photo'><i className="ri-dashboard-line"></i>Dashboard</Link></li>
           ):(    
-            <li><Link to='/dashboard'>Dashboard</Link></li>
+            <li><Link to='/dashboardAdmin'><i className="ri-dashboard-line"></i>Dashboard</Link></li>
         )}
         <li onClick={handleLogout}><Link><i className="ri-logout-box-line"></i>Logout</Link> </li>
       </ul>

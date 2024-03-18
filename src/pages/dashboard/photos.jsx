@@ -6,27 +6,46 @@ import { url_develope } from '../../const';
 import { useNavigate } from 'react-router-dom';
 import { swalConfirm } from '../../components/alert';
 import { jwtDecode } from 'jwt-decode';
+import Pagination from './components/pagination';
 
 function Photos() {
     const [data, setData] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const navigate = useNavigate()
+    const [galleryType, setGalleryType] = useState('public'); // 'public' atau 'own'
+    const [currentPage, setCurrentPage] =useState(1);
+    const recordsPerPage = 5;
+
+    const indexOfLastRecord = currentPage * recordsPerPage;
+    const indexOfFirstRecord = indexOfLastRecord - recordsPerPage;
+    const currentRecords = data.slice(indexOfFirstRecord, indexOfLastRecord);
+    const nPages = Math.ceil(data.length / recordsPerPage)
 
     const token = localStorage.getItem('jwtToken');
-    const getUserId = () => {
-      if (token) {
-        const decode = jwtDecode(token);
-        return decode.userId;
-      }
-      return null;
-    };
-    const userId = getUserId();
+  const getUserInfo = () => {
+    if (token) {
+      const decodedToken = jwtDecode(token);
+      return {
+        userID: decodedToken.userId,
+        role: decodedToken.role
+      };
+    }
+    return null;
+  };
+  const userInfo = getUserInfo();
 
     
     const fetchData = useCallback(async () => {
         try {
             setIsLoading(true);
-            const response = await axios.get(`${url_develope}/upload/photo/${userId}`);
+            let response;
+            
+            if (galleryType === 'own') {
+                response = await axios.get(`${url_develope}/upload/`);
+            } else if (galleryType === 'public') {
+     
+                response = await axios.get(`${url_develope}/upload/photo/${userInfo.userID}`);
+            }
             const dataImageUrl = response.data.map((item) => ({
                 ...item,
                 src: `http://localhost:3001/${item.fileLocation[0].src}`
@@ -37,13 +56,19 @@ function Photos() {
         } finally {
             setIsLoading(false);
         }
-    }, [userId]);
+    }, [userInfo.userID, galleryType]);
+
+    const handleGalleryTypeChange = (event) => {
+        setGalleryType(event.target.value);
+
+    };
+    
 
     useEffect(() => {
-        if (userId) {
+        if (userInfo.userID) {
             fetchData();
         }
-    }, [userId, fetchData]);
+    }, [userInfo.userID, fetchData]);
 
     
     const handleDelete = (photoId) => {
@@ -84,14 +109,25 @@ function Photos() {
     return (
         <>
          <Sidebar />
-            <div className='relative overflow-x-auto shadow-md sm:rounded-lg m-5'>
-                <div className='flex  justify-end m-4'>
-                     <button
-                      className="btn btn-primary"  
-                      onClick={() => navigate('/uploadPhoto')}>
-                        + Photos
-                      </button>
-                  </div>
+            <div className='relative bg-gray-800 overflow-x-auto shadow-md sm:rounded-lg m-5'>
+                <div className='m-3 '> 
+                    <p className='text-xl md:text-2xl'>All Photo List</p>
+                    <p className='text-base text-start mt-2 '>Photo total: {data.length}</p>
+                </div>
+                    <div className='flex  justify-end m-4'>
+                    {userInfo.role === 'admin' && (
+                <select className="select select-bordered w-full max-w-48 mx-3" value={galleryType} onChange={handleGalleryTypeChange}>
+                    <option value="public">Own Gallery</option>
+                    <option value="own">Public Gallery</option>
+                </select>
+            )}
+                        
+                        <button
+                        className="btn btn-primary"  
+                        onClick={() => navigate('/uploadPhoto')}>
+                            + Photos
+                        </button>
+                    </div>
                 <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
                     <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                         <tr>
@@ -117,9 +153,9 @@ function Photos() {
                                     <Loading />  
                         ) : (
                             data.length > 0 ? (
-                                data.map((item, index) => (
+                                currentRecords.map((item, index) => (
                                     <tr key={item._id} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-                                        <td className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">{index + 1}</td>
+                                        <td className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"> {(currentPage - 1) * recordsPerPage + index + 1}</td>
                                         <td className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">{item.photoTittle}</td>
                                         <td className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                                             {item.categories.map((category, index) => (
@@ -155,6 +191,14 @@ function Photos() {
                         )}
                     </tbody>
                 </table>
+                {data.length > 0 && (
+                <Pagination
+                    nPages={nPages}
+                    currentPage={currentPage}
+                    setCurrentPage={setCurrentPage}
+                />
+            )}
+            
             </div>
         </>
     );

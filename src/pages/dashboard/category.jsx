@@ -5,14 +5,22 @@ import Loading from '../../components/loading';
 import CategoryUpdate from './components/action/categoryUpdate'
 import { swalSucces,  swalConfirm} from '../../components/alert';
 import Sidebar from './components/sidebar';
+import Pagination from './components/pagination';
 
 
 function TableCategory() {
-    const [data, setData] = useState([])
-    const [isLoading, setIsLoading] = useState(false)
-    const [categoryName, setCategoryName]= useState('')
-    const [editData, setEditData] = useState('')
+    const [data, setData] = useState([]);
+    const [isLoading, setIsLoading] = useState(false);
+    const [categoryName, setCategoryName]= useState('');
+    const [editData, setEditData] = useState('');
+    const [currentPage, setCurrentPage] =useState(1);
+    const recordsPerPage = 5;
 
+    const indexOfLastRecord = currentPage * recordsPerPage;
+    const indexOfFirstRecord = indexOfLastRecord - recordsPerPage;
+    const currentRecords = data.slice(indexOfFirstRecord, indexOfLastRecord);
+    const nPages = Math.ceil(data.length / recordsPerPage)
+    
 
     const fetchData =()=>{
         setIsLoading(true);
@@ -109,9 +117,14 @@ function TableCategory() {
   return (
     <>
     <Sidebar/>
-    <div className="relative overflow-x-auto shadow-md sm:rounded-lg m-5">
-                <div className='flex justify-end'>
+    <div className="relative overflow-x-auto bg-gray-800 shadow-md sm:rounded-lg m-5">
+            <div className='m-3'>
+                <p className='text-xl md:text-2xl mb-3'>Gallery List</p>
+                <p className='text-base text-start mt-2 '>Categories total: {data.length}</p>
+            </div>
+                <div className='flex justify-end mx-4'>
             <button className="btn btn-primary" onClick={handleOpenModal}>+ Category</button>
+          
             <dialog id="addModal" className="modal">
                 <div className="modal-box">
                     <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2" onClick={handleModalClose}>✕</button>
@@ -140,9 +153,6 @@ function TableCategory() {
          editData={editData}
          handleEdit={handleEdit}/>
    
-          
-            
-           
     <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
         <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
             <tr>
@@ -162,10 +172,10 @@ function TableCategory() {
        <Loading/>
     ) : (
         data.length > 0 ? (
-            data.map((item, index) => (
+            currentRecords.map((item, index) => (
                 <tr key={index} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
                     <th scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                        {++index}
+                        {(currentPage - 1) * recordsPerPage + index + 1}
                     </th>
                     <td className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white    ">
                         {item.nameCategory}
@@ -191,10 +201,17 @@ function TableCategory() {
     </tbody>
 
     </table>
+        {data.length > 0 && (
+        <Pagination
+        nPages={nPages}
+        currentPage={currentPage}
+        setCurrentPage={setCurrentPage}
+        />
+            )}
 
 </div>
 </>
-  )
+  ) 
 }
 
 export default TableCategory

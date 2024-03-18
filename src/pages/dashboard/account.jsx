@@ -5,19 +5,35 @@ import { url_develope } from '../../const';
 import Loading from '../../components/loading';
 import { swalConfirm, swalSucces } from '../../components/alert';
 import Sidebar from './components/sidebar';
+import Pagination from './components/pagination';
 
 function TableAccount() {
     const [data, setData] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
     const [selectedRole, setSelectedRole] = useState('')
+    const [countAdmins, setCountAdmins] = useState('')
+    const [countUsers, setCountUsers]= useState('')
     const navigate = useNavigate()
+    const [currentPage, setCurrentPage] =useState(1);
+    const recordsPerPage = 5;
+
+    const indexOfLastRecord = currentPage * recordsPerPage;
+    const indexOfFirstRecord = indexOfLastRecord - recordsPerPage;
+    const currentRecords = data.slice(indexOfFirstRecord, indexOfLastRecord);
+    const nPages = Math.ceil(data.length / recordsPerPage)
 
     useEffect(() => {
         setIsLoading(true);
         axios.get(`${url_develope}/account/auth/`)
           .then(response => {
-            setData(response.data);
+            const accounts = response.data
+            setData(accounts);
             setIsLoading(false); 
+
+            const countAdmins = accounts.filter(account => account.role === 'admin').length;
+            const countUsers = accounts.filter(account => account.role === 'user').length;
+            setCountAdmins(countAdmins)
+            setCountUsers(countUsers)
           })
           .catch(error => {
             console.error('Error fetching data:', error);
@@ -80,8 +96,13 @@ function TableAccount() {
 
     
     return (
-      <div>
+        <>
         <Sidebar/>
+      <div className='relative overflow-x-auto bg-gray-800 shadow-md sm:rounded-lg m-5'>
+        <div className='m-3 '> 
+        <p className='text-xl md:text-2xl'>Account List</p>
+        <p className='text-base text-start mt-2 '>Account total: {data.length}(User:{countUsers}, Admin:{countAdmins})</p>
+        </div>
         <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400 relative overflow-x-auto shadow-md sm:rounded-lg m-5">
             {isLoading && (
                 <tbody>
@@ -112,9 +133,9 @@ function TableAccount() {
             </thead>
             <tbody>
                 {!isLoading && data.length > 0 ? (
-                    data.map((item, index) => (
+                    currentRecords.map((item, index) => (
                         <tr key={index} className='bg-white border-b dark:bg-gray-800 dark:border-gray-700'>
-                            <td className=" p-2 px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">{++index}</td>
+                            <td className=" p-2 px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"> {(currentPage - 1) * recordsPerPage + index + 1}</td>
                             <td className=" p-2 px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">{item.username}</td>
                             <td className=" p-2">{item.email}</td>
                             <td className=" p-2">
@@ -162,7 +183,15 @@ function TableAccount() {
                 )}
             </tbody>
         </table>
+        {data.length > 0 && (
+        <Pagination
+        nPages={nPages}
+        currentPage={currentPage}
+        setCurrentPage={setCurrentPage}
+        />
+            )}
     </div>
+    </>
     
     );
 }

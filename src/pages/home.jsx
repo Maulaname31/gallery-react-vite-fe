@@ -15,6 +15,8 @@ function Home() {
   const [post, setPost] = useState([]);
   const [dataAlbum, setDataAlbum] = useState([])
   const [selectedPhotoId, setSelectedPhotoId] = useState('')
+  const [albumName, setAlbumName] = useState('')
+  const [description, setDescription] = useState('')
   const navigate = useNavigate()
 
   const token = localStorage.getItem('jwtToken');
@@ -110,8 +112,34 @@ function Home() {
       console.error('Gagal mengirim perubahan ke server:', error);
   }
 };
-  
 
+const handleSubmit =(e)=>{
+  e.preventDefault();
+  axios.post(`${url_develope}/album/createAlbum`, {
+      albumName: albumName,
+      description: description,
+      userId: userId
+  })
+  
+  .then(response => {
+      swalSucces('Success', "Category created successfully", "success")
+  })
+  .catch(error => {
+      console.error('Error adding category:', error);
+
+  });
+  setAlbumName('');
+  setDescription('');
+  handleModalClose();
+  fetchAlbum()
+};
+  
+const handleOpenModal = ()=>{
+  document.getElementById('addModal').showModal()
+}
+const handleModalClose = () => {
+  document.getElementById('addModal').close();
+};
 
   
   useEffect(() => {
@@ -136,7 +164,7 @@ function Home() {
         onClick={(e) => {navigate(`/view/${e.photo.photoId}`)}}
         renderPhoto={({ photo, wrapperStyle, renderDefaultPhoto }) => (
           <>
-          <div className='relative transition duration-300 transform inset-0 hover:scale-95 ' style={{ ...wrapperStyle }}>
+          <div className="relative transition duration-300 transform inset-0 hover:scale-95" style={{ ...wrapperStyle }}>
               {renderDefaultPhoto({ wrapped: true })}
                 <div className="absolute top-0 right-0 mr-2 mt-2 text-white">
                     <div className="dropdown dropdown-left">
@@ -155,6 +183,7 @@ function Home() {
             </>
         )}
     />
+    
     <dialog id="my_modal_3" className="modal">
         <div className="modal-box">
             <form method="dialog">
@@ -169,15 +198,48 @@ function Home() {
                           className="my-2 block max-w-full p-4 bg-red-300 border border-gray-200 rounded-lg shadow cursor-pointer hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700"
                           onClick={() => handleAddphotoAlbum(album.albumId)}>                       
                            <p className='text-lg'>{album.albumName}</p>
-                          <p className='text-gray-300'>Photo: </p>
+                          <p className='text-gray-300'> </p>
                         </div>
                     ))}
                 </div>
             </form>
-            <button className='btn right-2 float-end hidden sm:block'>+ Album</button> 
+            <button onClick={handleOpenModal} className='btn right-2 float-end hidden sm:block'>Create new album</button> 
         </div>
     </dialog>
       </div>
+
+      <div className='flex justify-end'>
+            <dialog id="addModal" className="modal">
+                <div className="modal-box">
+                    <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2" onClick={handleModalClose}>✕</button>
+                    <form method="dialog" onSubmit={handleSubmit}>
+                        <h3 className="font-bold text-lg mb-3">Add Album</h3>
+
+                        <div className='flex justify-center my-5'>
+                            <input 
+                                type="text" 
+                                placeholder="Album Name" 
+                                value={albumName}
+                                onChange={(e)=> setAlbumName(e.target.value)}
+                                className="input input-bordered input-info w-full max-w-xs"
+                            />
+                        </div>
+                        <div className='flex justify-center '>
+                            <textarea 
+                                type="text" 
+                                placeholder="(Optional)" 
+                                value={description}
+                                onChange={(e)=> setDescription(e.target.value)}
+                                className="textarea-sm input input-bordered input-info w-full max-w-xs"
+                            />
+                        </div>
+                        <div className='flex justify-end m-4'>
+                            <button className="btn btn-primary " type='submit'>Add</button>
+                        </div>
+                    </form>
+                </div>
+            </dialog>
+        </div>
 
         <div>
         <Footer />

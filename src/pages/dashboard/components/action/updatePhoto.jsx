@@ -6,46 +6,41 @@ import { jwtDecode } from 'jwt-decode'
 import { swalSucces } from '../../../../components/alert'
 
 
-function UploadUpdate() {
+function UpdatePhoto() {
     const {photoId} = useParams()
     const [data, setData] = useState([]);
     const [tittle, setTittle] = useState('');
     const [description, setDescription] = useState('');
-    const [uploadDate, setUploadDate] = useState('');
     const [fileLocation, setFileLocation] = useState({
       src:'',
       width:'',
       height:''
     });
     const [c, setC] = useState("");
-    const [categories, setCategories] = useState({
-        categoryId:'',
-        nameCategory:''
-    })
     const [selectedCategories, setSelectedCategories] = useState([]);
     const [notif, setNotif] = useState('');
     const [previewUrl, setPreviewUrl] = useState('')
     const navigate = useNavigate();
 
     const token = localStorage.getItem('jwtToken');
-    const getUserId = () => {
-      if (token) {
-        const decode = jwtDecode(token);
-        return decode.userId;
-      }
-      return null;
-    };
-    const userID = getUserId();
+    const getUserInfo = () => {
+        if (token) {
+          const decodedToken = jwtDecode(token);
+          return {
+            userID: decodedToken.userId,
+            role: decodedToken.role
+          };
+        }
+        return null;
+      };
+      const userInfo = getUserInfo();
 
     useEffect(() => {
         axios.get(`${url_develope}/upload/${photoId}`)
             .then(response => {
                 const photoData = response.data;
-                const isoDate = new Date(photoData.uploadDate);
-                const formattedDate = isoDate.toISOString().split('T')[0];
                 setTittle(photoData.photoTittle);
                 setDescription(photoData.description);
-                setUploadDate(formattedDate);
                 setSelectedCategories(photoData.categories);
                 if (photoData.fileLocation && photoData.fileLocation.length > 0) {
                     const dataImageUrl = `http://localhost:3001/${photoData.fileLocation[0].src}`
@@ -88,14 +83,23 @@ function UploadUpdate() {
 
     const handleUpload = async(e) => {
         e.preventDefault();
-
+    
         const data = new FormData();    
         data.append('photoTittle', tittle);
         data.append('description', description);
-        data.append('uploadDate', uploadDate);
         data.append('src', fileLocation);
-        data.append('userId', userID);
-        data.append('categories', JSON.stringify(selectedCategories));
+        if (userInfo.role !== 'admin') {
+            data.append('userId', userInfo.userID);
+        }
+        const categoriesData = selectedCategories.map(category => ({
+            categoryId: category.categoryId,
+            nameCategory: category.nameCategory
+        }));
+        categoriesData.forEach((category, index) => {
+            for (let key in category) {
+                data.append(`categories[${index}][${key}]`, category[key]);
+            }
+        });
 
         try {
             const response = await axios.put(`${url_develope}/upload/updatePhoto/${photoId}`, data, {
@@ -103,17 +107,19 @@ function UploadUpdate() {
                     'Content-Type':  'multipart/form-data',
                 }
             });
-            console.log(response)
             swalSucces('Success',"update Photo successfully", "success")
             navigate('/photo');
         } catch (error) {
             console.error('Error uploading photo:', error);
             setNotif('Upload failed. Please try again.'); 
         }
+
     };
+
 
     const handleCategoryChange = (e) => {
         const selected = e.currentTarget.value;
+        console.log(selected)
         if (selected.length > 0 && !selectedCategories.find(v => v.categoryId == selected)) {
             const selectedCategory = data.find(v => v.categoryId == selected);
             setSelectedCategories([...selectedCategories, selectedCategory]);
@@ -216,21 +222,6 @@ function UploadUpdate() {
                     </div>
                  </div>
 
-
-                    <div className="form-control">
-                        <label className="label">
-                            <span className="label-text">Date</span>
-                        </label>
-                        <input
-                            type="date" 
-                            value={ uploadDate || ''}
-                            onChange={(e) => setUploadDate(e.target.value)}
-                            id="uploadDate"
-                            className="input input-bordered" 
-                            required 
-                        />
-                    </div>
-
                     <div className="form-control mt-6">
                         <button onClick={handleUpload} className="btn btn-primary">Upload</button>
                     </div>
@@ -242,4 +233,4 @@ function UploadUpdate() {
     );
 }
 
-export default UploadUpdate
+export default UpdatePhoto  ;

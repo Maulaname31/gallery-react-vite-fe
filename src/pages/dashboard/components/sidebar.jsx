@@ -51,18 +51,20 @@ function Sidebar() {
 
         {userRole === 'admin' ? (
           <>
-            <li><Link to='/dashboard'><i className="ri-dashboard-fill"></i> Dashboard<span className='badge'>admin</span></Link>
+            <li><Link to='/dashboardAdmin'><i className="ri-dashboard-fill"></i> Dashboard<span className='badge'>admin</span></Link>
             </li>
-            <li><Link to="/photo"><i className="ri-upload-2-fill"></i> Post Image</Link></li>
+            <li><Link to="/photo"><i className="ri-image-2-line"></i> Gallery</Link></li>
             <li><Link to="/album"><i className="ri-folder-image-line"></i>Album</Link></li> 
             <li><Link to='/categoryTable'><i className="ri-hashtag"></i>Category<span className='badge'>admin</span></Link></li>
-            <li><Link to="/like-comment"><i className="ri-thumb-up-line"></i>Like & Comment</Link></li> 
+            {/* <li><Link to="/like-comment"><i className="ri-thumb-up-line"></i>Like & Comment</Link></li>  */}
+            <li><Link to="/manageAccount"><i className="ri-shield-user-fill"></i>Accounts<span className='badge'>admin</span> </Link></li> 
           </>
         ) : (
           <>
-            <li><Link to="/photo"><i className="ri-upload-2-fill"></i> Post Image</Link></li>
+            <li><Link to="/photo"><i className="ri-upload-2-fill"></i> Gallery</Link></li>
             <li><Link to="/album"><i className="ri-folder-image-line"></i>Album</Link></li> 
-            <li><Link to="/like-comment"><i className="ri-thumb-up-line"></i>Like & Comment</Link></li> 
+            {/* <li><Link to="/like-comment"><i className="ri-thumb-up-line"></i>Like & Comment</Link></li>  */}
+        
           </>
         )}
 
@@ -72,9 +74,9 @@ function Sidebar() {
     </div>
       </div>
 
-      {/* <div className="navbar-center">
-        <Link to='/' className="btn btn-ghost text-xl">daisyUI</Link>
-      </div> */}
+      <div className="navbar-center">
+        <Link to='/' className="btn btn-ghost text-xl">GalleryUi </Link>
+      </div>
 
       <div className="navbar-end">
         <button className="btn btn-ghost btn-circle">

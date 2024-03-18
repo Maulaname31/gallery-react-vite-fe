@@ -4,5 +4,5 @@
 
 body{
    background-color: #424769;
-   @apply min-h-[100dvh]
+   @apply min-h-[120dvh]
 }

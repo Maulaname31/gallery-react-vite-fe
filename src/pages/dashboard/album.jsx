@@ -6,6 +6,7 @@ import Loading from '../../components/loading';
 import { swalConfirm,swalSucces } from '../../components/alert';
 import UpdateAlbum from './components/action/albumUpdate';
 import { jwtDecode } from 'jwt-decode';
+import Pagination from './components/pagination';
 
 
 
@@ -15,6 +16,14 @@ function Album() {
     const [description, setDescription] = useState('')
     const [isLoading, setIsLoading] = useState(false)
     const [editData, setEditData] = useState('')
+    const [currentPage, setCurrentPage] =useState(1);
+    const recordsPerPage = 5;
+
+    const indexOfLastRecord = currentPage * recordsPerPage;
+    const indexOfFirstRecord = indexOfLastRecord - recordsPerPage;
+    const currentRecords = data.slice(indexOfFirstRecord, indexOfLastRecord);
+    const nPages = Math.ceil(data.length / recordsPerPage)
+
     const token = localStorage.getItem('jwtToken');
     const getUserId = () => {
       if (token) {
@@ -115,8 +124,12 @@ function Album() {
   return (
     <>
     <Sidebar/>
-    <div className="relative overflow-x-auto shadow-md sm:rounded-lg m-5">
-                <div className='flex justify-end'>
+    <div className="relative overflow-x-auto bg-gray-800 shadow-md sm:rounded-lg m-5">
+      <div className='m-3   '> 
+        <p className='text-xl md:text-2xl'>Albums List</p>
+        <p className='text-base text-start mt-2 '>Albums total: {data.length}</p>
+        </div>
+            <div className='flex justify-end'>
             <button className="btn btn-primary" onClick={handleOpenModal}>+ Album</button>
             <dialog id="addModal" className="modal">
                 <div className="modal-box">
@@ -178,10 +191,10 @@ function Album() {
        <Loading/>
     ) : (
         data.length > 0 ? (
-            data.map((item, index) => (
+            currentRecords.map((item, index) => (
                 <tr key={index} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
                     <th scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                        {++index}
+                    {(currentPage - 1) * recordsPerPage + index + 1}
                     </th>
                     <td className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white    ">
                         {item.albumName}
@@ -208,8 +221,14 @@ function Album() {
         )
        )}
     </tbody>
-
     </table>
+     {data.length > 0 && (
+    <Pagination
+    nPages={nPages}
+    currentPage={currentPage}
+    setCurrentPage={setCurrentPage}
+        />
+        )}
 </div>
 </>
   )
