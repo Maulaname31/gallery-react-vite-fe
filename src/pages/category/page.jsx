@@ -1,6 +1,6 @@
 import React,{useState, useEffect, useCallback} from 'react'
 import axios from 'axios'
-import { useParams, useNavigate } from 'react-router-dom'
+import { useParams, useNavigate, Link } from 'react-router-dom'
 import { url_develope } from '../../const'
 import { PhotoAlbum } from 'react-photo-album'
 import Nav from '../../components/nav'
@@ -13,6 +13,8 @@ import { swalSucces } from '../../components/alert'
 function CategoryPage() {
     const {categoryId} = useParams()
     const [categoryImage, setCategoryImage] = useState([])
+    const [dataCategory, setDataCategory] = useState([])
+    const [selectedCategoryId, setSelectedCategoryId] = useState('')
     const [dataAlbum, setDataAlbum] = useState([])
     const [albumName, setAlbumName]= useState('')
     const [description, setDescription] = useState('')
@@ -56,6 +58,23 @@ function CategoryPage() {
         console.error('Error fetching data:', error);
 
       });
+    }
+
+    const fetchCategory = () =>{
+      axios.get(`${url_develope}/category/`)
+      .then(response => {
+        const data = response.data
+          setDataCategory(data);
+  
+        })
+        .catch(error => {
+          console.error('Error fetching data Category:', error);
+  
+        });
+    }
+    const handleCategoryClick = (categoryId) =>{
+      navigate(`/categoryPage/${categoryId}`)
+      setSelectedCategoryId(categoryId)
     }
 
     
@@ -107,12 +126,24 @@ function CategoryPage() {
 
   useEffect(() => {
     fetchCategoryData();  
+    fetchCategory()
     fetchAlbum()
   }, [fetchCategoryData]); 
 
   return (
     <div className='h-auto'>
-    <Nav />
+      <div>
+      <Nav />
+      </div>
+      <div className="flex overflow-x-auto rounded-xl justify-center my-6">
+
+      {dataCategory.map((item, index) => (        
+          <a key={index} className={`btn btn-outline mx-1 min-w-24 p-2 border text-center rounded-full ${selectedCategoryId === item.categoryId ? 'bg-gray-400 text-black' : ''}`} onClick={() => handleCategoryClick(item.categoryId)}>
+          {item.nameCategory}
+        </a>
+      ))}
+    </div>
+
 
     <div className='p-4 mt-8 mx-auto my-auto shadow-md'>
         {categoryImage.length > 0 ?(

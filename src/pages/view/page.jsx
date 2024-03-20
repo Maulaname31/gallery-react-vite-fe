@@ -4,6 +4,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { url_develope } from '../../const';
 import { jwtDecode } from 'jwt-decode';
 import { swalConfirm } from '../../components/alert';
+import { diffForHuman } from '../../components/utils/dateUtils';
 
 function ViewImage() {
   const {photoId} = useParams()
@@ -20,14 +21,20 @@ function ViewImage() {
   const navigate = useNavigate()
 
   const token = localStorage.getItem('jwtToken');
-  const getUserId = () => {
+ const getUserInfo = () => {
     if (token) {
-      const decode = jwtDecode(token);
-      return decode.userId;
+      const decodedToken = jwtDecode(token);
+      return {
+        username: decodedToken.username,
+        role: decodedToken.role,
+        userID: decodedToken.userId
+      };
     }
     return null;
   };
-  const userID = getUserId(); 
+  const userInfo = getUserInfo();
+  const userID = userInfo?.userID;
+
   
     const fetchImage = async () => {
     try {
@@ -45,6 +52,8 @@ function ViewImage() {
         console.error('Error fetching data:', error);
       }
     };
+    const updatedAt = new Date(photoData.updatedAt);
+    const timeAgo = diffForHuman(updatedAt);
 
     const fetchComment = async () => {
       try {
@@ -131,9 +140,7 @@ function ViewImage() {
  
 
     const handleDelete = (commentId) => {
-      swalConfirm("Are you sure?","Are you sure you want to delete this!", "warning", "Yess, Delete it")
-      .then((result) => {
-        if (result.isConfirmed) {
+      
             axios.delete(`${url_develope}/comment/deleteComment/${commentId}`)
             .then(response => {
                 fetchComment(); 
@@ -142,8 +149,6 @@ function ViewImage() {
             .catch(error => {
               console.error('Error deleting category:', error);
             })
-        }
-    });
     };
 
     const handleEdit = () => {
@@ -154,12 +159,12 @@ function ViewImage() {
       return userId === userID
     };
 
-    //like handle
+
     const handleLike = async (e) => {
       try {
         if (!userID) {
-          handleValidate(); // Panggil handleValidate jika userID tidak ada
-          return; // Hentikan eksekusi lebih lanjut
+          handleValidate();
+          return; 
         }
         if (userLiked) {
           await axios.delete(`${url_develope}/like/unlike/${userID}`);
@@ -211,7 +216,7 @@ function ViewImage() {
                 </span>
               ))}
             </p>
-              <p className="text-gray-400 mb-4">{new Date(photoData.updatedAt).toLocaleDateString('id-ID')}</p>
+              <p className="text-gray-400 mb-4">{timeAgo}</p>
               <div className="text-gray-700 flex justify-between items-center mb-4">
               <p className="mr-2">Uploader: {userData.username}</p>
                <div className='flex items-center flex-col'>
@@ -230,7 +235,14 @@ function ViewImage() {
             {commentData.map((item, index) =>(
               <div key={index} className="rounded-lg p-4 relative">
               <div className="flex items-start">
-                <img src="https://randomuser.me/api/portraits/men/11.jpg" alt="Profile" className="w-10 h-10 rounded-full mr-4" />
+               <div className='avatar placeholder'>
+               <div className="bg-neutral text-neutral-content w-10 rounded-full mx-3">
+              <span className="text-base">
+                {item.userName.split("")[0].charAt()}
+                {item.userName.split(" ")[1] ? item.userName.split(" ")[1].charAt(0) : ''}
+                </span>
+            </div>
+               </div>
                 <div className="flex flex-col">
                   <span className="font-bold text-gray-800">{item.userName}</span>
                   <p className="text-sm text-gray-800">{item.contentComment}</p>
@@ -259,7 +271,7 @@ function ViewImage() {
              <label htmlFor="chat" className="sr-only">Your message</label>
                <div className="flex items-center px-3 py-2 rounded-lg  top-52  ">
               <textarea 
-              onClick={handleValidate}
+              disabled={!userID}
               id="chat" 
               rows="1" 
               value={contentComment}

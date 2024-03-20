@@ -14,6 +14,7 @@ import { swalConfirm } from '../components/alert';
 function Home() {
   const [post, setPost] = useState([]);
   const [dataAlbum, setDataAlbum] = useState([])
+  const [dataCategory, setDataCategory] = useState([])
   const [selectedPhotoId, setSelectedPhotoId] = useState('')
   const [albumName, setAlbumName] = useState('')
   const [description, setDescription] = useState('')
@@ -60,6 +61,22 @@ function Home() {
 
       });
     }
+   const fetchCategory = () =>{
+    axios.get(`${url_develope}/category/`)
+    .then(response => {
+      const data = response.data
+        setDataCategory(data);
+
+      })
+      .catch(error => {
+        console.error('Error fetching Category data:', error);
+
+      });
+   }
+   const handleCategoryClick = (categoryId) =>{
+    navigate(`/categoryPage/${categoryId}`)
+  }
+
     const handleDelete = (photoId) => {
       swalConfirm("Are you sure?","Are you sure you want to delete this!", "warning", "Yess, Delete it")
       .then((result) => {
@@ -144,6 +161,7 @@ const handleModalClose = () => {
   
   useEffect(() => {
     fetchAlbum()
+    fetchCategory()
     fetchPostData();  
   }, [fetchPostData]); 
 
@@ -153,22 +171,30 @@ const handleModalClose = () => {
       <div>
       <Nav />
       </div>
-      <div>
+      <div className="flex overflow-x-auto rounded-xl justify-center my-4">
+      {dataCategory.map((item, index) => (        
+        <a key={index} className='btn btn-outline mx-1 min-w-24 p-2 border text-center rounded-full' onClick={() => handleCategoryClick(item.categoryId)}>
+      {item.nameCategory}
+    </a>
 
-      </div>
+      ))}
+    </div>
 
-      <div className='relative p-4 mt-8 mx-5 my-auto shadow-2xl rounded-md'>
+      <div className='relative p-4  mx-5 my-auto shadow-2xl rounded-md'>
       <PhotoAlbum
         layout="rows"
         photos={post}
         onClick={(e) => {navigate(`/view/${e.photo.photoId}`)}}
         renderPhoto={({ photo, wrapperStyle, renderDefaultPhoto }) => (
           <>
-          <div className="relative transition duration-300 transform inset-0 hover:scale-95" style={{ ...wrapperStyle }}>
+          <div className="relative transition duration-300 transform inset-0 group hover:scale-95 " style={{ ...wrapperStyle }}>
               {renderDefaultPhoto({ wrapped: true })}
                 <div className="absolute top-0 right-0 mr-2 mt-2 text-white">
+               
                     <div className="dropdown dropdown-left">
-                        <div tabIndex={0} role="button" className=" p-2 rounded-full hover:bg-zinc-700"><i className="ri-more-fill"></i></div>
+                        <div tabIndex={0} role="button" className="p-2 rounded-full transition duration-300 hover:scale-150 opacity-0 group-hover:opacity-100 ">
+                          <i className="ri-more-fill"></i>  
+                        </div>
                         <ul tabIndex={0} className="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52">
                             <li><a><i className="ri-download-2-line"></i>Download</a></li>
                             <li onClick={() => {navigate(`/view/${photo.photoId}`);}}><a><i className="ri-eye-line"></i>View</a></li>
