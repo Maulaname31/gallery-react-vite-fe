@@ -8,11 +8,13 @@ import { useNavigate } from 'react-router-dom';
 import { swalSucces } from '../components/alert';
 import { jwtDecode } from 'jwt-decode';
 import { swalConfirm } from '../components/alert';
+import Search from '../components/search';
 
 
 
 function Home() {
   const [post, setPost] = useState([]);
+  const [originalPost, setOriginalPost] =useState([])
   const [dataAlbum, setDataAlbum] = useState([])
   const [dataCategory, setDataCategory] = useState([])
   const [selectedPhotoId, setSelectedPhotoId] = useState('')
@@ -42,6 +44,7 @@ function Home() {
    
       }));  
       setPost(dataImageUrl);
+      setOriginalPost(dataImageUrl)
     } catch (error) {
       console.error('Error fetching data:', error.message);
     }
@@ -158,6 +161,31 @@ const handleModalClose = () => {
   document.getElementById('addModal').close();
 };
 
+const searchPosts = (searchTerm) => {
+
+  if (!searchTerm.trim()) {
+    setPost(originalPost); 
+    return;
+  }
+  const filteredPosts = post.filter((item) => {
+    const lowercaseTitle = item.photoTittle ? item.photoTittle.toLowerCase() : '';
+    const lowercaseDescription = item.description ? item.description.toLowerCase() : '';
+  
+    
+    const lowercaseSearchTerm = searchTerm.toLowerCase();
+    return (
+      lowercaseTitle.includes(lowercaseSearchTerm) ||
+      lowercaseDescription.includes(lowercaseSearchTerm)
+
+
+    );
+  });
+
+
+  setPost(filteredPosts);
+};
+
+
   
   useEffect(() => {
     fetchAlbum()
@@ -171,9 +199,14 @@ const handleModalClose = () => {
       <div>
       <Nav />
       </div>
-      <div className="flex overflow-x-auto rounded-xl justify-center my-4">
+        <div className='flex justify-center'>
+        <Search posts={post} onSearch={searchPosts} />
+        </div>
+        <div className="flex overflow-x-auto rounded-xl justify-center my-3 mx-4 md:mx-10 lg:mx-20">
+
       {dataCategory.map((item, index) => (        
-        <a key={index} className='btn btn-outline mx-1 min-w-24 p-2 border text-center rounded-full' onClick={() => handleCategoryClick(item.categoryId)}>
+        <a key={index} className="btn btn-outline mx-1 min-w-20 p-1 border text-center rounded-full lg:min-w-20 "
+        onClick={() => handleCategoryClick(item.categoryId)}>
       {item.nameCategory}
     </a>
 
@@ -198,7 +231,9 @@ const handleModalClose = () => {
                         <ul tabIndex={0} className="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52">
                             <li><a><i className="ri-download-2-line"></i>Download</a></li>
                             <li onClick={() => {navigate(`/view/${photo.photoId}`);}}><a><i className="ri-eye-line"></i>View</a></li>
-                            <li onClick={() => showModal(photo.photoId)}><a><i className="ri-play-list-add-line"></i>Save to album</a></li>
+                          {token && ( 
+                             <li onClick={() => showModal(photo.photoId)}><a><i className="ri-play-list-add-line"></i>Save to album</a></li>
+                             )}
                             {photo.userId === userId && (
                                 <li onClick={() => handleDelete(photo.photoId)} ><a><i className="ri-delete-bin-6-line"></i>Delete</a></li>
                             )}

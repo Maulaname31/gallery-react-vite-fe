@@ -76,13 +76,13 @@ function ViewAlbum() {
             <Nav/>
         </div>
         <div className='relative p-4 mt-8 mx-5 my-auto shadow-2xl rounded-md'>
+        {albumImage.length > 0 ?(
       <PhotoAlbum
         layout="rows"
         photos={albumImage}
         onClick={(e) => {navigate(`/view/${e.photo.photoId}`)}}
         renderPhoto={({ photo, wrapperStyle, renderDefaultPhoto }) => (
           <>
-         {albumImage.length > 0 ? (
         <div className='relative transition duration-300 transform inset-0 hover:scale-95 ' style={{ ...wrapperStyle }}>
           {renderDefaultPhoto({ wrapped: true })}
           <div className="absolute top-0 right-0 mr-2 mt-2 text-white">
@@ -98,12 +98,13 @@ function ViewAlbum() {
             </div>
           </div>
         </div>
-      ) : (
-        <div className="text-center text-gray-500">No photos in this album yet</div>
-      )}  
+ 
             </>
         )}
     />
+    ):(
+      <p className='text-center'>There are no images available for this Albums.</p>
+    )}
       </div>
         <div>
             <Footer/>

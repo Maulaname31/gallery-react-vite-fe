@@ -136,7 +136,6 @@ function CategoryPage() {
       <Nav />
       </div>
       <div className="flex overflow-x-auto rounded-xl justify-center my-6">
-
       {dataCategory.map((item, index) => (        
           <a key={index} className={`btn btn-outline mx-1 min-w-24 p-2 border text-center rounded-full ${selectedCategoryId === item.categoryId ? 'bg-gray-400 text-black' : ''}`} onClick={() => handleCategoryClick(item.categoryId)}>
           {item.nameCategory}
