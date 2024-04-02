@@ -8,6 +8,7 @@ import { useNavigate } from 'react-router-dom';
 import { swalSucces } from '../components/alert';
 import { jwtDecode } from 'jwt-decode';
 import { swalConfirm } from '../components/alert';
+import FileSaver, { saveAs } from 'file-saver';
 import Search from '../components/search';
 
 
@@ -32,10 +33,10 @@ function Home() {
   };
   const userId = getUserId();
 
-  const fetchPostData = useCallback(async () => {
+  const fetchPostData = useCallback(async () => { 
     try {
       const response = await axios.get(`${url_develope}/upload/`);
-      const dataImageUrl = response.data.map((item) => ({
+      const dataImageUrl = response.data.reverse().map((item) => ({
         ...item,
         src: `http://localhost:3001/${item.fileLocation[0].src}`,
         width: item.fileLocation[0].width,
@@ -185,8 +186,26 @@ const searchPosts = (searchTerm) => {
   setPost(filteredPosts);
 };
 
+const handleDownload = async (src) => {
+  try {
+    const response = await fetch(src, {
+       method: 'GET',
+      headers: {
+        'Content-Type': 'image/jpg',
+      },
+    });
+    const blob = await response.blob();
 
-  
+    const urlParts = src.split('/');
+    const filename = urlParts[urlParts.length - 1];
+
+    saveAs(blob, filename);
+  } catch (error) {
+    console.error('Error downloading file:', error);
+  }
+};
+
+
   useEffect(() => {
     fetchAlbum()
     fetchCategory()
@@ -229,7 +248,7 @@ const searchPosts = (searchTerm) => {
                           <i className="ri-more-fill"></i>  
                         </div>
                         <ul tabIndex={0} className="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52">
-                            <li><a><i className="ri-download-2-line"></i>Download</a></li>
+                            <li onClick={() => handleDownload(photo.src)}><a><i className="ri-download-2-line"></i>Download</a></li>
                             <li onClick={() => {navigate(`/view/${photo.photoId}`);}}><a><i className="ri-eye-line"></i>View</a></li>
                           {token && ( 
                              <li onClick={() => showModal(photo.photoId)}><a><i className="ri-play-list-add-line"></i>Save to album</a></li>

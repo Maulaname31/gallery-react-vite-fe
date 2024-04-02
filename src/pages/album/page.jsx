@@ -22,7 +22,11 @@ function AlbumPage() {
   const fetchData =()=>{
     axios.get(`${url_develope}/album/user/${userId}`)
     .then(response => {
-        setDataAlbum(response.data);
+      const dataImageUrl = response.data.map((item) => ({
+        ...item,
+        src: `http://localhost:3001/${item.coverPhoto}`
+        }));
+        setDataAlbum(dataImageUrl)
       })
       .catch(error => {
         console.error('Error fetching data:', error);
@@ -45,16 +49,26 @@ function AlbumPage() {
 <div className=' p-4 mt-8 mx-auto max-w-4xl shadow-xl'>
   <div className="flex flex-wrap justify-center gap-6">
     {dataAlbum.map((album, index) => (
-      <div 
-            key={index} 
-            className="card lg:card w-72 bg-base-100 shadow-xl image-full cursor-pointer hover:shadow-2xl"
-            onClick={() => handleViewAlbum({ albumId: album.albumId, userId: album.userId })}>
-                <figure><img src="https://daisyui.com/images/stock/photo-1606107557195-0e29a4b5b4aa.jpg" alt="Shoes" /></figure>
-              <div className="card-body">
-                <h2 className="card-title">{album.albumName}</h2>
-                <p>{album.description}</p>
-              </div>
-        </div>
+    <div 
+    key={index} 
+    className="card lg:card w-72 bg-base-100 shadow-xl image-full cursor-pointer hover:shadow-2xl"
+    onClick={() => handleViewAlbum({ albumId: album.albumId, userId: album.userId })}
+>
+    <figure className="max-h-48 overflow-hidden">
+        <img src={album.src} alt="Shoes" className="w-full" />
+    </figure>
+    <div className="card-body">
+        <h2 className="card-title">{album.albumName}</h2>
+        <p>{album.description}</p>
+{/*       
+        <div tabIndex={0} role="button" className="absolute top-0 right-0 mt-2 mr-2">
+            <i className="ri-more-fill"></i>  
+          </div> */}
+    
+        
+      </div>
+  </div>
+
     ))}
   </div>
 </div>

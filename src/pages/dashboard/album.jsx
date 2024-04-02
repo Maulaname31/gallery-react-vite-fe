@@ -14,6 +14,8 @@ function Album() {
     const [data, setData] = useState([])
     const [albumName, setAlbumName] = useState('')
     const [description, setDescription] = useState('')
+    const [coverPhoto, setCoverPhoto] = useState('')
+    const [previewUrl, setPreviewUrl] = useState('')
     const [isLoading, setIsLoading] = useState(false)
     const [editData, setEditData] = useState('')
     const [currentPage, setCurrentPage] =useState(1);
@@ -37,8 +39,13 @@ function Album() {
     const fetchData =()=>{
         setIsLoading(true);
         axios.get(`${url_develope}/album/user/${userId}`)
-        .then(response => {
-            setData(response.data);
+        .then(response => { 
+
+            const dataImageUrl = response.data.reverse().map((item) => ({
+            ...item,
+            src: `http://localhost:3001/${item.coverPhoto}`
+            }));
+            setData(dataImageUrl)
             setIsLoading(false); 
           })
           .catch(error => {
@@ -47,28 +54,49 @@ function Album() {
           });
         }
 
+        const handleFileChange = (e) => {
+            const file = e.target.files[0];
+            if (file instanceof Blob) {
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    setPreviewUrl(event.target.result);
+                };
+                setCoverPhoto(file)
+                reader.readAsDataURL(file);
+            } else {
+                console.error("Invalid file format");
+            }
+        }
+
           
-    const handleSubmit =(e)=>{
-        e.preventDefault();
-        setIsLoading(true)
-        axios.post(`${url_develope}/album/createAlbum`, {
-            albumName: albumName,
-            description: description,
-            userId: userId
-        })
+        const handleSubmit = (e) => {
+            e.preventDefault();
+            setIsLoading(true);
         
-        .then(response => {
-            fetchData()
-            swalSucces('Success', "Category created successfully", "success")
-        })
-        .catch(error => {
-            console.error('Error adding category:', error);
-   
-        });
-        setAlbumName('');
-        setDescription('');
-        handleModalClose();
-    };
+            const formData = new FormData();
+            formData.append('albumName', albumName);
+            formData.append('description', description);
+            formData.append('coverPhoto', coverPhoto)
+            formData.append('userId', userId);
+        
+            axios.post(`${url_develope}/album/createAlbum`, formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                }
+            })
+            .then(response => {
+                fetchData();
+                swalSucces('Success', "Category created successfully", "success");
+            })
+            .catch(error => {
+                console.error('Error adding category:', error);
+            });
+        
+            setAlbumName('');
+            setDescription('');
+            handleModalClose();
+        };
+        
 
         useEffect(() => {
             fetchData()
@@ -137,6 +165,31 @@ function Album() {
                     <form method="dialog" onSubmit={handleSubmit}>
                         <h3 className="font-bold text-lg mb-3">Add Album</h3>
 
+                        <div className="flex items-center justify-center w-2/2">
+                            {!previewUrl ? (
+                                <label htmlFor="dropzone-file" className="flex flex-col items-center justify-center w-full h-64 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-bray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600">
+                                    <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                                        <svg className="w-8 h-8 mb-4 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 16">
+                                            <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"/>
+                                        </svg>
+                                        <p className="mb-2 text-sm text-gray-500 dark:text-gray-400"><span className="font-semibold">Click to upload cover</span></p>
+                                        <p className="text-xs text-gray-500 dark:text-gray-400">SVG, PNG, JPG or GIF (MAX. 800x400px)</p>
+                                    </div>
+                                    <input 
+                                    id="dropzone-file" 
+                                    type="file" 
+                                    onChange={handleFileChange}
+                                    className="hidden" />
+                                </label>
+                                ) : (
+                                <img
+                                    src={previewUrl}
+                                    alt="Preview"
+                                    className="max-w-full h-auto max-h-72 object-cover mx-auto"
+                                />
+                                )}
+                     </div>
+                                    
                         <div className='flex justify-center my-5'>
                             <input 
                                 type="text" 
@@ -182,6 +235,9 @@ function Album() {
                     Description
                 </th>
                 <th scope="col" className="px-6 py-3">
+                    Cover Photo
+                </th>
+                <th scope="col" className="px-6 py-3">
                     Action
                 </th>
             </tr>
@@ -202,7 +258,17 @@ function Album() {
                     <td className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white    ">
                         {item.description}
                     </td>
-
+                    <td className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                    {item.src ? (
+                        <img
+                            src={item.src}
+                       
+                            className="object-cover w-24 h-24 rounded-md"
+                        />
+                    ) : (
+                        <span>No Cover</span>
+                    )}
+                </td>
                     <td className="px-6 py-4 whitespace-nowrap ">
                         <button  onClick={() => {handleOpenEditModal(); setEditData(item)}} className="bg-blue-500 text-white rounded-md p-3 inline-flex items-center justify-center focus:outline-none transform transition duration-300 hover:scale-110" >
                             <i className="ri-edit-line"></i>

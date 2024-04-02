@@ -5,6 +5,7 @@ import { url_develope } from '../../const';
 import { jwtDecode } from 'jwt-decode';
 import { swalConfirm } from '../../components/alert';
 import { diffForHuman } from '../../components/utils/dateUtils';
+import EditComment from './action/editComment';
 
 function ViewImage() {
   const {photoId} = useParams()
@@ -15,10 +16,11 @@ function ViewImage() {
   const [commentData, setCommentData] = useState([])
   const [contentComment, setcontentComment] = useState('')
   const [ openActionComment, setOpenActionComment] = useState(null);
-  const [ openActionPhoto, setOpenActionPhoto] = useState(null);
   const [likes, setLikes] = useState(0)
   const [userLiked, setUserLiked] = useState(false)
   const navigate = useNavigate()
+  const [editComment, setEditComment] = useState('')
+  
 
   const token = localStorage.getItem('jwtToken');
  const getUserInfo = () => {
@@ -133,26 +135,19 @@ function ViewImage() {
     
     const hadnleActionComment = (index) => {
       setOpenActionComment(index === openActionComment ? null : index);
+      
     };
-    const handleActionPhoto = (index) => {
-      setOpenActionPhoto(index === openActionPhoto ? null : index);
-    };
- 
 
     const handleDelete = (commentId) => {
       
             axios.delete(`${url_develope}/comment/deleteComment/${commentId}`)
             .then(response => {
                 fetchComment(); 
-                setOpenDropdownIndex(false)
+                setOpenActionComment(false)
             })
             .catch(error => {
               console.error('Error deleting category:', error);
             })
-    };
-
-    const handleEdit = () => {
-    
     };
 
     const isCurrentUser = (userId) => {
@@ -182,6 +177,31 @@ function ViewImage() {
         console.error('Error:', error);
       }
     };
+
+    const handleEdit = async (e, editedData, commentId) => {
+      e.preventDefault();
+  
+      try {
+        const response = await axios.put(`${url_develope}/comment/updateComment/${commentId}`, editedData);
+  
+        if (response.status === 200) {
+            fetchComment()
+            setOpenActionComment(false)
+        }
+      } catch (error) {
+        console.error('Error editing guest:', error);
+        setTimeout(() => {}, 3000);
+      }
+  };
+
+    // handle modal
+    const handleOpenEditModal = ()=>{
+      document.getElementById('editModal').showModal()
+      
+    }
+    const handleModalEditClose = () => {
+      document.getElementById('editModal').close();
+  };
 
   useEffect(() => {  
     fetchLike()
@@ -258,7 +278,7 @@ function ViewImage() {
               {openActionComment === index && (
                       <div className="absolute top-2 right-9 mt-2 z-10 w-36 bg-white rounded divide-y divide-gray-100 shadow dark:bg-gray-700 dark:divide-gray-600">
                           <ul className="py-1 text-sm text-gray-700 dark:text-gray-200"aria-labelledby="dropdownMenuIconHorizontalButton">
-                            <li><a href="#"  onClick={handleEdit} className="block py-2 px-4 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Edit</a></li>
+                            <li><a href="#"  onClick={() => {handleOpenEditModal(); setEditComment(item)}} className="block py-2 px-4 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Edit</a></li>
                             <li><a href="#" onClick={()=> handleDelete(item.commentId)} className="block py-2 px-4 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Remove</a></li>
                       </ul>
                     </div>
@@ -267,6 +287,12 @@ function ViewImage() {
               </div>
             </div>
             ))}
+
+            <EditComment    
+            handleModalEditClose={handleModalEditClose} 
+            handleOpenEditModal={handleOpenEditModal}
+            editComment={editComment}
+            handleEdit={handleEdit}/>
   
             <form className='m-3' onSubmit={handleSendComment}>
              <label htmlFor="chat" className="sr-only">Your message</label>

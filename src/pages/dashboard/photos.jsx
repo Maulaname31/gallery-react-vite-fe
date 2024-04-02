@@ -8,6 +8,7 @@ import { swalConfirm } from '../../components/alert';
 import { jwtDecode } from 'jwt-decode';
 import Pagination from './components/pagination';
 
+
 function Photos() {
     const [data, setData] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
@@ -46,7 +47,7 @@ function Photos() {
      
                 response = await axios.get(`${url_develope}/upload/photo/${userInfo.userID}`);
             }
-            const dataImageUrl = response.data.map((item) => ({
+            const dataImageUrl = response.data.reverse().map((item) => ({
                 ...item,
                 src: `http://localhost:3001/${item.fileLocation[0].src}`
             }));
@@ -62,7 +63,12 @@ function Photos() {
         setGalleryType(event.target.value);
 
     };
+
+    const handleOpenLightbox = (photoId) =>{
+        console.log(photoId)
+    }
     
+
 
     useEffect(() => {
         if (userInfo.userID) {
@@ -108,6 +114,7 @@ function Photos() {
 
     return (
         <>
+
          <Sidebar />
             <div className='relative bg-gray-800 overflow-x-auto shadow-md sm:rounded-lg m-5'>
                 <div className='m-3 '> 
@@ -159,7 +166,8 @@ function Photos() {
                                         <td className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">{item.photoTittle}</td>
                                         <td className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                                             {item.categories.map((category, index) => (
-                                                <span key={index}>
+                                                <span key={index}
+                                                >
                                                     {category.nameCategory}
                                                     {index !== item.categories.length - 1 && ', '}
                                                 </span>
@@ -169,6 +177,7 @@ function Photos() {
                                             <img
                                             src={item.src}
                                             alt={item.photoTittle}
+                                            onClick={(e) => {handleOpenLightbox(item.photoId)}}
                                             className="object-cover w-24 h-24 rounded-md"
                                           />}
                                           </td>

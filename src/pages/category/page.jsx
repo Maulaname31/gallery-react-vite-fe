@@ -7,12 +7,14 @@ import Nav from '../../components/nav'
 import Footer from '../../components/footer'
 import { jwtDecode } from 'jwt-decode'
 import { swalSucces } from '../../components/alert'
+import Search from '../../components/search'
 
 
 
 function CategoryPage() {
     const {categoryId} = useParams()
     const [categoryImage, setCategoryImage] = useState([])
+    const [originalPost, setOriginalPost] =useState([])
     const [dataCategory, setDataCategory] = useState([])
     const [selectedCategoryId, setSelectedCategoryId] = useState('')
     const [dataAlbum, setDataAlbum] = useState([])
@@ -41,6 +43,7 @@ function CategoryPage() {
    
       }));  
       setCategoryImage(dataImageUrl);
+      setOriginalPost(dataImageUrl)
     } catch (error) {
       console.error('Error fetching data:', error.message);
     }
@@ -124,6 +127,30 @@ function CategoryPage() {
     document.getElementById('addModal').close();
   };
 
+  const searchPosts = (searchTerm) => {
+
+    if (!searchTerm.trim()) {
+      setCategoryImage(originalPost); 
+      return;
+    }
+    const filteredPosts = categoryImage.filter((item) => {
+      const lowercaseTitle = item.photoTittle ? item.photoTittle.toLowerCase() : '';
+      const lowercaseDescription = item.description ? item.description.toLowerCase() : '';
+    
+      
+      const lowercaseSearchTerm = searchTerm.toLowerCase();
+      return (
+        lowercaseTitle.includes(lowercaseSearchTerm) ||
+        lowercaseDescription.includes(lowercaseSearchTerm)
+  
+  
+      );
+    });
+  
+  
+    setCategoryImage(filteredPosts);
+  };
+
   useEffect(() => {
     fetchCategoryData();  
     fetchCategory()
@@ -135,11 +162,16 @@ function CategoryPage() {
       <div>
       <Nav />
       </div>
+      <div className='flex justify-center'>
+        <Search posts={categoryImage} onSearch={searchPosts} />
+        </div>
       <div className="flex overflow-x-auto rounded-xl justify-center my-6">
       {dataCategory.map((item, index) => (        
-          <a key={index} className={`btn btn-outline mx-1 min-w-24 p-2 border text-center rounded-full ${selectedCategoryId === item.categoryId ? 'bg-gray-400 text-black' : ''}`} onClick={() => handleCategoryClick(item.categoryId)}>
-          {item.nameCategory}
-        </a>
+        <a key={index} className={`btn btn-outline mx-1 min-w-20 p-1 border text-center rounded-full ${selectedCategoryId === item.categoryId ? 'bg-gray-400 text-black' : ''} lg:min-w-20  `}
+        onClick={() => handleCategoryClick(item.categoryId)}>
+      {item.nameCategory}
+    </a>
+
       ))}
     </div>
 
