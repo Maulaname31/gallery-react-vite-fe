@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react'
+import React, {useState, useEffect, useCallback} from 'react'
 import axios from 'axios'
 import Sidebar from './components/sidebar';
 import { url_develope } from '../../const';
@@ -17,6 +17,7 @@ function Album() {
     const [coverPhoto, setCoverPhoto] = useState('')
     const [previewUrl, setPreviewUrl] = useState('')
     const [isLoading, setIsLoading] = useState(false)
+    const [albumType , setAlbumType] = useState('public')
     const [editData, setEditData] = useState('')
     const [currentPage, setCurrentPage] =useState(1);
     const recordsPerPage = 5;
@@ -27,32 +28,46 @@ function Album() {
     const nPages = Math.ceil(data.length / recordsPerPage)
 
     const token = localStorage.getItem('jwtToken');
-    const getUserId = () => {
-      if (token) {
-        const decode = jwtDecode(token);
-        return decode.userId;
-      }
-      return null;
-    };
-    const userId = getUserId();
-
-    const fetchData =()=>{
-        setIsLoading(true);
-        axios.get(`${url_develope}/album/user/${userId}`)
-        .then(response => { 
-
-            const dataImageUrl = response.data.reverse().map((item) => ({
-            ...item,
-            src: `http://localhost:3001/${item.coverPhoto}`
-            }));
-            setData(dataImageUrl)
-            setIsLoading(false); 
-          })
-          .catch(error => {
-            console.error('Error fetching data:', error);
-            setIsLoading(false);
-          });
+    const getUserInfo = () => {
+        if (token) {
+          const decodedToken = jwtDecode(token);
+          return {
+            userID: decodedToken.userId,
+            role: decodedToken.role
+          };
         }
+        return null;
+      };
+      const userInfo = getUserInfo();
+
+      const fetchData = useCallback(async () => {
+        try {
+            setIsLoading(true);
+            let response;
+            
+            if (albumType === 'own') {
+                response = await axios.get(`${url_develope}/album/`);
+            } else if (albumType === 'public') {
+    
+                response = await axios.get(`${url_develope}/album/user/${userInfo.userID}`);
+            }
+            const dataImageUrl = response.data.reverse().map((item) => ({
+                ...item,
+                src: `http://localhost:3001/${item.coverPhoto}`
+            }));
+            setData(dataImageUrl);
+        } catch (error) {
+            console.error('Error fetching data:', error);
+        } finally {
+            setIsLoading(false);
+        }
+    }, [userInfo.userID, albumType]);
+
+
+        const handleAlbumTypeChange = (e) =>{
+            setAlbumType(e.target.value)
+        }
+      
 
         const handleFileChange = (e) => {
             const file = e.target.files[0];
@@ -61,8 +76,9 @@ function Album() {
                 reader.onload = (event) => {
                     setPreviewUrl(event.target.result);
                 };
-                setCoverPhoto(file)
+                setCoverPhoto([file]); 
                 reader.readAsDataURL(file);
+                console.log(file)
             } else {
                 console.error("Invalid file format");
             }
@@ -76,8 +92,12 @@ function Album() {
             const formData = new FormData();
             formData.append('albumName', albumName);
             formData.append('description', description);
-            formData.append('coverPhoto', coverPhoto)
-            formData.append('userId', userId);
+            if (coverPhoto && coverPhoto.length > 0) {
+                formData.append('coverPhoto', coverPhoto[0]); 
+            } else {
+                formData.append('coverPhoto', '');
+            }
+            formData.append('userId', userInfo.userID);
         
             axios.post(`${url_develope}/album/createAlbum`, formData, {
                 headers: {
@@ -87,6 +107,7 @@ function Album() {
             .then(response => {
                 fetchData();
                 swalSucces('Success', "Category created successfully", "success");
+                console.log()
             })
             .catch(error => {
                 console.error('Error adding category:', error);
@@ -100,7 +121,7 @@ function Album() {
 
         useEffect(() => {
             fetchData()
-        },[])
+        },[fetchData])
 
         const handleDelete = (albumId) => {
             swalConfirm("Are you sure?","Are you sure you want to delete this!", "warning", "Yess, Delete it")
@@ -121,21 +142,24 @@ function Album() {
                 }
             });
         }
-        const handleEdit = async (e, editedData, albumId) => {
-            e.preventDefault();
-        
+        const handleEdit = async (formData, albumId) => {
             try {
-              const response = await axios.put(`${url_develope}/album/updateAlbum/${albumId}`, editedData);
+                const response = await axios.put(`${url_develope}/album/updateAlbum/${albumId}`, formData, {
+                    headers: {
+                        'Content-Type': 'multipart/form-data'
+                    }
+                });
         
-              if (response.status === 200) {
-                  swalSucces("Success", "successfully updated the data", "success")
-                  fetchData()
-              }
+                if (response.status === 200) {
+                    swalSucces("Success", "successfully updated the data", "success")
+                    fetchData()
+                }
             } catch (error) {
-              console.error('Error editing guest:', error);
-              setTimeout(() => {}, 3000);
+                console.error('Error editing album:', error);
+                setTimeout(() => {}, 3000);
             }
         };
+
 
     const handleOpenModal = ()=>{
         document.getElementById('addModal').showModal()
@@ -158,6 +182,12 @@ function Album() {
         <p className='text-base text-start mt-2 '>Albums total: {data.length}</p>
         </div>
             <div className='flex justify-end'>
+            {userInfo.role === 'admin' && (
+                <select className="select select-bordered w-full max-w-48 mx-3" value={albumType} onChange={handleAlbumTypeChange}>
+                    <option value="public">Own Gallery</option>
+                    <option value="own">Public Gallery</option>
+                </select>
+            )}
             <button className="btn btn-primary" onClick={handleOpenModal}>+ Album</button>
             <dialog id="addModal" className="modal">
                 <div className="modal-box">

@@ -36,28 +36,28 @@ function Photos() {
   const userInfo = getUserInfo();
 
     
-    const fetchData = useCallback(async () => {
-        try {
-            setIsLoading(true);
-            let response;
+            const fetchData = useCallback(async () => {
+                try {
+                    setIsLoading(true);
+                    let response;
+                    
+                    if (galleryType === 'own') {
+                        response = await axios.get(`${url_develope}/upload/`);
+                    } else if (galleryType === 'public') {
             
-            if (galleryType === 'own') {
-                response = await axios.get(`${url_develope}/upload/`);
-            } else if (galleryType === 'public') {
-     
-                response = await axios.get(`${url_develope}/upload/photo/${userInfo.userID}`);
-            }
-            const dataImageUrl = response.data.reverse().map((item) => ({
-                ...item,
-                src: `http://localhost:3001/${item.fileLocation[0].src}`
-            }));
-            setData(dataImageUrl);
-        } catch (error) {
-            console.error('Error fetching data:', error);
-        } finally {
-            setIsLoading(false);
-        }
-    }, [userInfo.userID, galleryType]);
+                        response = await axios.get(`${url_develope}/upload/photo/${userInfo.userID}`);
+                    }
+                    const dataImageUrl = response.data.reverse().map((item) => ({
+                        ...item,
+                        src: `http://localhost:3001/${item.fileLocation[0].src}`
+                    }));
+                    setData(dataImageUrl);
+                } catch (error) {
+                    console.error('Error fetching data:', error);
+                } finally {
+                    setIsLoading(false);
+                }
+            }, [userInfo.userID, galleryType]);
 
     const handleGalleryTypeChange = (event) => {
         setGalleryType(event.target.value);
@@ -124,8 +124,8 @@ function Photos() {
                     <div className='flex  justify-end m-4'>
                     {userInfo.role === 'admin' && (
                 <select className="select select-bordered w-full max-w-48 mx-3" value={galleryType} onChange={handleGalleryTypeChange}>
-                    <option value="public">Own Gallery</option>
                     <option value="own">Public Gallery</option>
+                    <option value="public">Own Gallery</option>
                 </select>
             )}
                         

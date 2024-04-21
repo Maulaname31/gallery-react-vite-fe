@@ -55,7 +55,7 @@ function AlbumPage() {
     onClick={() => handleViewAlbum({ albumId: album.albumId, userId: album.userId })}
 >
     <figure className="max-h-48 overflow-hidden">
-        <img src={album.src} alt="Shoes" className="w-full" />
+        <img src={album.src} alt="image" className="w-full" />
     </figure>
     <div className="card-body">
         <h2 className="card-title">{album.albumName}</h2>

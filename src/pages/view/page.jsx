@@ -20,6 +20,7 @@ function ViewImage() {
   const [userLiked, setUserLiked] = useState(false)
   const navigate = useNavigate()
   const [editComment, setEditComment] = useState('')
+  const [isEdited, setIsEdited] = useState(null)
   
 
   const token = localStorage.getItem('jwtToken');
@@ -187,7 +188,9 @@ function ViewImage() {
         if (response.status === 200) {
             fetchComment()
             setOpenActionComment(false)
+            setIsEdited(commentId)
         }
+        
       } catch (error) {
         console.error('Error editing guest:', error);
         setTimeout(() => {}, 3000);
@@ -264,7 +267,7 @@ function ViewImage() {
             </div>
                </div>
                 <div className="flex flex-col">
-                  <span className="font-bold text-gray-800">{item.userName}</span>
+                  <p className="font-bold text-gray-800">{item.userName} {isEdited === item.commentId &&<span className='text-xs text-slate-800'>(Edited)</span>}</p> 
                 <p className='text-xs '>{diffForHuman(new Date(item.updatedAt))}</p>
                   <p className="text-sm text-gray-800">{item.contentComment}</p>
                 </div>
