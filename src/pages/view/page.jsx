@@ -261,8 +261,8 @@ function ViewImage() {
                <div className='avatar placeholder'>
                <div className="bg-neutral text-neutral-content w-10 rounded-full mx-3">
               <span className="text-base">
-                {item.userName.split("")[0].charAt()}
-                {item.userName.split(" ")[1] ? item.userName.split(" ")[1].charAt(0) : ''}
+                {item.userName.split("")[0].charAt().toUpperCase()}
+                {item.userName.split(" ")[1] ? item.userName.split(" ")[1].charAt(0).toUpperCase() : ''}
                 </span>
             </div>
                </div>

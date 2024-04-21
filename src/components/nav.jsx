@@ -83,7 +83,7 @@ const handleCategoryClick = (categoryId) =>{
               <>
           <li>
             <Link to='/viewAlbum'>Album</Link> 
-            <ul className="p-2">
+            {/* <ul className="p-2">
             <li><Link to='/'>All</Link></li>
               {dataAlbum.map((item, index) => (        
                 <li key={index}><button onClick={()=> handleCategoryClick(item.albumId)}>
@@ -91,14 +91,14 @@ const handleCategoryClick = (categoryId) =>{
                   </button>
               </li> 
               ))}
-            </ul>
+            </ul> */}
           </li>
               </>
             )}
-          <li><Link to=''>About</Link></li>
+          <li><Link to='/about'>About</Link></li>
         </ul>
       </div>
-      <Link to="/" className="btn btn-ghost text-xl">GalleryUi</Link>
+      <Link to="/" className="btn btn-ghost text-xl">PictUL</Link>
     </div>
     <div className="navbar-center hidden lg:flex">
       <ul className="menu menu-horizontal px-1">
@@ -125,12 +125,12 @@ const handleCategoryClick = (categoryId) =>{
             </li>
             </>
           )}
-        <li><Link to=''>About</Link></li>
+        <li><Link to='/about'>About</Link></li>
       </ul>
       
     </div>
     <div className="navbar navbar-end ">
-    <input type="checkbox" value="synthwave" className="toggle theme-controller bg-amber-300 border-sky-400 [--tglbg:theme(colors.sky.500)] checked:bg-blue-300 checked:border-blue-800 checked:[--tglbg:theme(colors.blue.900)] row-start-1 col-start-1 col-span-2"/>
+      
 
       {jwt ? (
           <>
@@ -139,8 +139,8 @@ const handleCategoryClick = (categoryId) =>{
      <div tabIndex={0} role="button" className="btn btn-ghost btn-circle avatar online placeholder">
      <div className="bg-neutral text-neutral-content w-10 rounded-full">
         <span className="text-base">
-          {userInfo.username.split("")[0].charAt()}
-          {userInfo.username.split(" ")[1] ? userInfo.username.split(" ")[1].charAt(0) : ''}
+          {userInfo.username.split("")[0].charAt().toUpperCase()}
+          {userInfo.username.split(" ")[1] ? userInfo.username.split(" ")[1].charAt(0).toUpperCase() : ''}
           </span>
       </div>
       </div>

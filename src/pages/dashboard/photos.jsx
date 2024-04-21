@@ -13,7 +13,7 @@ function Photos() {
     const [data, setData] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const navigate = useNavigate()
-    const [galleryType, setGalleryType] = useState('public'); // 'public' atau 'own'
+    const [galleryType, setGalleryType] = useState('public'); 
     const [currentPage, setCurrentPage] =useState(1);
     const recordsPerPage = 5;
 

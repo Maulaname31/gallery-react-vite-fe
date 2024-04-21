@@ -50,7 +50,7 @@ function Sidebar() {
         <div className="drawer-side z-50">
       <label htmlFor="my-drawer-2" aria-label="close sidebar" className="drawer-overlay"></label>
       <ul className="menu p-4 w-80 min-h-full bg-base-200 text-base-content">
-        <Link to='/' className="btn btn-ghost text-xl">GalleryUi</Link>
+        <Link to='/' className="btn btn-ghost text-xl">PictUL</Link>
 
         {userInfo.role === 'admin' ? (
           <>
@@ -78,7 +78,7 @@ function Sidebar() {
       </div>
 
       <div className="navbar-center">
-        <Link to='/' className="btn btn-ghost text-xl">GalleryUi </Link>
+        <Link to='/' className="btn btn-ghost text-xl">PictUL </Link>
       </div>
 
       <div className="navbar-end">

@@ -17,6 +17,7 @@ import ViewAlbum from './pages/album/page'
 import ViewPhoto from './pages/album/photoAlbum'
 import DashboardAdmin from './pages/dashboard/adminDashboard';
 import Forbiden from './components/routes/403';
+import About from './pages/about/page';
 
 
 function App() {
@@ -24,6 +25,7 @@ function App() {
 <Router>
   <Routes>
         <Route path='/' element={<Home />} />
+        <Route path='/about' element={<About/>}/>
         <Route path='/view/:photoId' element={<ViewImage/>}/>
         <Route path='/categoryPage/:categoryId' element={<CategoryPage/>}/>
         <Route path='/login' element={<LoginPage/>}/>
